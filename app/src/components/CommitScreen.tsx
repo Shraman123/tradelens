@@ -5,41 +5,21 @@ import { rupees } from "../lib/format"
 interface Props {
   persona: PersonaData
   onBack: () => void
+  onConfirm: (habitId: string) => void
 }
 
 /**
- * Screen 4. Only ever reached when analysis.habits is non-empty — the
- * Review screen doesn't render the entry CTA otherwise (Vikram/Sara have
- * nothing to commit to), and this returns null as a defensive fallback if
- * it's ever reached without a habit anyway.
+ * Screen 4 (selection step). Only ever reached when analysis.habits is
+ * non-empty — the Review screen doesn't render the entry CTA otherwise
+ * (Vikram/Sara have nothing to commit to) — and this returns null as a
+ * defensive fallback if it's ever reached without a habit anyway.
  */
-export function CommitScreen({ persona, onBack }: Props) {
+export function CommitScreen({ persona, onBack, onConfirm }: Props) {
   const { analysis, narration } = persona
   const habits = analysis.habits // already ranked; habits[0] is rank #1
   const [selectedId, setSelectedId] = useState(habits[0]?.id)
-  const [confirmed, setConfirmed] = useState(false)
 
   if (habits.length === 0) return null
-
-  const selected = habits.find((h) => h.id === selectedId) ?? habits[0]
-  const selectedRule = narration.habits[selected.id]?.rule
-
-  if (confirmed) {
-    return (
-      <div className="mx-auto max-w-3xl space-y-6 px-4 py-6">
-        <button type="button" onClick={onBack} className="text-sm text-neutral-400 hover:text-neutral-200">
-          ← Back to review
-        </button>
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-5">
-          <p className="text-[11px] uppercase tracking-wide text-amber-400/80">Committed for next month</p>
-          <p className="mt-2 text-lg font-medium text-neutral-50">{selectedRule}</p>
-          <p className="mt-3 text-sm text-neutral-400">
-            Next month's review opens by checking whether you kept this rule.
-          </p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-6">
@@ -93,7 +73,7 @@ export function CommitScreen({ persona, onBack }: Props) {
 
       <button
         type="button"
-        onClick={() => setConfirmed(true)}
+        onClick={() => onConfirm(selectedId)}
         className="w-full rounded-xl bg-amber-500 px-4 py-3 text-sm font-semibold text-neutral-950 transition-colors hover:bg-amber-400"
       >
         Commit to this rule
