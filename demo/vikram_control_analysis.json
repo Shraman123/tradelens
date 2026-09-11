@@ -1,0 +1,58 @@
+{
+  "persona": "vikram_control",
+  "summary": {
+    "closed_trades": 216,
+    "trading_days": 44,
+    "net_pnl": -101866.0,
+    "gross_pnl": -87356.0,
+    "charges": 14510.0,
+    "win_rate": 0.435,
+    "ignored_orders": 9,
+    "window": "2026-07-01 to 2026-08-31",
+    "review_month": {
+      "month": "2026-08",
+      "closed_trades": 101,
+      "trading_days": 21,
+      "net_pnl": -52169.0,
+      "charges": 6805.0,
+      "win_rate": 0.426
+    },
+    "materiality_bar": 30004.0
+  },
+  "insufficient_data": false,
+  "message": null,
+  "note": "Habit costs overlap and must never be added together.",
+  "habits": [],
+  "also_noticed": [],
+  "watching": [],
+  "not_reported": [
+    {
+      "id": "size_up_after_loss",
+      "reason": "size ratio 1.00 < 1.3"
+    },
+    {
+      "id": "averaging_down",
+      "reason": "only 0 averaged-down positions"
+    },
+    {
+      "id": "fast_reentry_after_loss",
+      "reason": "p=0.764 >= 0.01 (could be noise)"
+    },
+    {
+      "id": "expiry_day_trading",
+      "reason": "p=0.727 >= 0.01 (could be noise)"
+    },
+    {
+      "id": "late_session_trading",
+      "reason": "p=0.263 >= 0.01 (could be noise)"
+    },
+    {
+      "id": "overtrading",
+      "reason": "p=0.352 >= 0.01 (could be noise)"
+    },
+    {
+      "id": "holds_losers_longer",
+      "reason": "hold ratio 0.97 < 1.5"
+    }
+  ]
+}

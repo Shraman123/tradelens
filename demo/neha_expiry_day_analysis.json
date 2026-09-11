@@ -1,0 +1,124 @@
+{
+  "persona": "neha_expiry_day",
+  "summary": {
+    "closed_trades": 214,
+    "trading_days": 44,
+    "net_pnl": -172586.0,
+    "gross_pnl": -160939.0,
+    "charges": 11647.0,
+    "win_rate": 0.336,
+    "ignored_orders": 7,
+    "window": "2026-07-01 to 2026-08-31",
+    "review_month": {
+      "month": "2026-08",
+      "closed_trades": 99,
+      "trading_days": 21,
+      "net_pnl": -94438.0,
+      "charges": 5353.0,
+      "win_rate": 0.313
+    },
+    "materiality_bar": 16642.0
+  },
+  "insufficient_data": false,
+  "message": null,
+  "note": "Habit costs overlap and must never be added together.",
+  "habits": [
+    {
+      "id": "expiry_day_trading",
+      "rank": 1,
+      "label": "Loses on expiry-day (0DTE) trades",
+      "kind": "slice",
+      "confidence": "strong",
+      "cost": 116891.0,
+      "p_value": 0.0002,
+      "evidence": {
+        "slice_trades": 90,
+        "slice_net": -116891.0,
+        "slice_avg": -1299.0,
+        "slice_win_rate": 0.289,
+        "slice_avg_return": -0.277,
+        "rest_avg_return": -0.048,
+        "rest_trades": 124,
+        "rest_avg": -449.0,
+        "rest_win_rate": 0.371
+      },
+      "counterfactual": "Net P&L if these trades had not been taken",
+      "n": 90,
+      "example_trades": [
+        {
+          "trade_id": "T044",
+          "date": "2026-07-14",
+          "entry": "10:36",
+          "symbol": "NIFTY 14JUL26 24650 CE",
+          "entry_size_rs": 10155,
+          "net_pnl": -8028,
+          "averaged_down": false
+        },
+        {
+          "trade_id": "T128",
+          "date": "2026-08-04",
+          "entry": "12:58",
+          "symbol": "NIFTY 04AUG26 24900 CE",
+          "entry_size_rs": 9465,
+          "net_pnl": -7518,
+          "averaged_down": false
+        },
+        {
+          "trade_id": "T096",
+          "date": "2026-07-28",
+          "entry": "10:56",
+          "symbol": "NIFTY 28JUL26 24100 CE",
+          "entry_size_rs": 7684,
+          "net_pnl": -6256,
+          "averaged_down": false
+        },
+        {
+          "trade_id": "T026",
+          "date": "2026-07-07",
+          "entry": "12:29",
+          "symbol": "NIFTY 07JUL26 24400 CE",
+          "entry_size_rs": 7500,
+          "net_pnl": -6226,
+          "averaged_down": false
+        },
+        {
+          "trade_id": "T199",
+          "date": "2026-08-25",
+          "entry": "12:26",
+          "symbol": "NIFTY 25AUG26 24100 CE",
+          "entry_size_rs": 8625,
+          "net_pnl": -6168,
+          "averaged_down": false
+        }
+      ]
+    }
+  ],
+  "also_noticed": [],
+  "watching": [],
+  "not_reported": [
+    {
+      "id": "size_up_after_loss",
+      "reason": "size ratio 1.04 < 1.3"
+    },
+    {
+      "id": "averaging_down",
+      "reason": "only 0 averaged-down positions"
+    },
+    {
+      "id": "fast_reentry_after_loss",
+      "reason": "p=0.059 >= 0.01 (could be noise)"
+    },
+    {
+      "id": "late_session_trading",
+      "reason": "slice n=1 < 8"
+    },
+    {
+      "id": "overtrading",
+      "reason": "explained by expiry_day_trading (confounded)"
+    },
+    {
+      "id": "holds_losers_longer",
+      "reason": "hold ratio 1.02 < 1.5"
+    }
+  ]
+}

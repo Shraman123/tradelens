@@ -1,0 +1,18 @@
+# secrets — never commit
+.env
+.env.*
+*.key
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# node / vite
+node_modules/
+dist/
+.vercel/
+
+# os
+.DS_Store
+Thumbs.db

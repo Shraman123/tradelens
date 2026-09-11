@@ -1,0 +1,13 @@
+
+=== HELDOUT | 2 month(s) | 30 seeds per persona ===
+arjun_revenge_sizer     28/30   expect: both planted habits in top 3 (ranked by computed cost), nothing unplanted
+neha_expiry_day         29/30   expect: expiry_day_trading ranked #1, nothing unplanted
+vikram_control          30/30   expect: zero habits (losing, but no repeated pattern)
+sara_thin_data          30/30   expect: insufficient-data response, zero habits
+
+Non-habit mentions (flag-only / watching): {('arjun_revenge_sizer', 'watching:averaging_down'): 2, ('neha_expiry_day', 'watching:overtrading'): 1, ('vikram_control', 'watching:expiry_day_trading'): 1}
+
+Failures:
+   ('arjun_revenge_sizer', 103, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 113, "missed ['averaging_down']")
+   ('neha_expiry_day', 126, '#1 was nothing, expected expiry_day_trading')

@@ -1,0 +1,37 @@
+
+=== HELDOUT | 1 month(s) | 30 seeds per persona ===
+arjun_revenge_sizer     13/30   expect: both planted habits in top 3 (ranked by computed cost), nothing unplanted
+neha_expiry_day         20/30   expect: expiry_day_trading ranked #1, nothing unplanted
+vikram_control          30/30   expect: zero habits (losing, but no repeated pattern)
+sara_thin_data          30/30   expect: insufficient-data response, zero habits
+
+Non-habit mentions (flag-only / watching): {('arjun_revenge_sizer', 'watching:averaging_down'): 10, ('neha_expiry_day', 'watching:expiry_day_trading'): 8, ('neha_expiry_day', 'watching:overtrading'): 5, ('neha_expiry_day', 'watching:fast_reentry_after_loss'): 2}
+
+Failures:
+   ('arjun_revenge_sizer', 102, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 103, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 104, "missed ['size_up_after_loss']")
+   ('arjun_revenge_sizer', 105, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 106, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 108, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 110, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 112, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 113, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 117, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 118, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 119, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 121, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 126, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 127, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 128, "missed ['averaging_down']")
+   ('arjun_revenge_sizer', 130, "missed ['averaging_down']")
+   ('neha_expiry_day', 102, '#1 was nothing, expected expiry_day_trading')
+   ('neha_expiry_day', 103, '#1 was nothing, expected expiry_day_trading')
+   ('neha_expiry_day', 104, '#1 was nothing, expected expiry_day_trading')
+   ('neha_expiry_day', 106, '#1 was fast_reentry_after_loss, expected expiry_day_trading')
+   ('neha_expiry_day', 110, '#1 was nothing, expected expiry_day_trading')
+   ('neha_expiry_day', 113, '#1 was nothing, expected expiry_day_trading')
+   ('neha_expiry_day', 114, '#1 was nothing, expected expiry_day_trading')
+   ('neha_expiry_day', 118, '#1 was nothing, expected expiry_day_trading')
+   ('neha_expiry_day', 125, '#1 was overtrading, expected expiry_day_trading')
+   ('neha_expiry_day', 126, '#1 was nothing, expected expiry_day_trading')
