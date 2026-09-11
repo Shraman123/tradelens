@@ -1,0 +1,140 @@
+{
+  "persona": "arjun_revenge_sizer",
+  "summary": {
+    "closed_trades": 190,
+    "trading_days": 44,
+    "net_pnl": -227256.0,
+    "gross_pnl": -215040.0,
+    "charges": 12216.0,
+    "win_rate": 0.337,
+    "ignored_orders": 6,
+    "window": "2026-07-01 to 2026-08-31",
+    "review_month": {
+      "month": "2026-08",
+      "closed_trades": 91,
+      "trading_days": 21,
+      "net_pnl": -95192.0,
+      "charges": 5912.0,
+      "win_rate": 0.33
+    },
+    "materiality_bar": 21492.0
+  },
+  "insufficient_data": false,
+  "message": null,
+  "note": "Habit costs overlap and must never be added together.",
+  "habits": [
+    {
+      "id": "size_up_after_loss",
+      "rank": 1,
+      "label": "Sizes up on the trade after a loss",
+      "kind": "costed",
+      "confidence": "strong",
+      "cost": 105732.0,
+      "p_value": 0.0002,
+      "evidence": {
+        "after_loss_trades": 96,
+        "median_entry_size_after_loss": 12562.0,
+        "median_entry_size_otherwise": 6578.0,
+        "size_ratio": 1.91,
+        "after_loss_net": -195375.0,
+        "after_loss_win_rate": 0.281,
+        "other_win_rate": 0.394
+      },
+      "counterfactual": "Net P&L if after-loss trades had used your usual entry size",
+      "n": 96,
+      "example_trades": [
+        {
+          "trade_id": "T050",
+          "date": "2026-07-16",
+          "entry": "11:25",
+          "symbol": "NIFTY 21JUL26 24200 PE",
+          "entry_size_rs": 17640,
+          "net_pnl": -8934,
+          "averaged_down": false
+        },
+        {
+          "trade_id": "T090",
+          "date": "2026-07-29",
+          "entry": "11:51",
+          "symbol": "NIFTY 04AUG26 24950 CE",
+          "entry_size_rs": 21398,
+          "net_pnl": -7160,
+          "averaged_down": false
+        },
+        {
+          "trade_id": "T125",
+          "date": "2026-08-10",
+          "entry": "12:38",
+          "symbol": "NIFTY 11AUG26 24900 CE",
+          "entry_size_rs": 22035,
+          "net_pnl": -6569,
+          "averaged_down": false
+        },
+        {
+          "trade_id": "T157",
+          "date": "2026-08-19",
+          "entry": "11:08",
+          "symbol": "NIFTY 25AUG26 25000 PE",
+          "entry_size_rs": 17738,
+          "net_pnl": -5999,
+          "averaged_down": false
+        },
+        {
+          "trade_id": "T059",
+          "date": "2026-07-20",
+          "entry": "11:20",
+          "symbol": "NIFTY 21JUL26 24200 PE",
+          "entry_size_rs": 17670,
+          "net_pnl": -5789,
+          "averaged_down": false
+        }
+      ]
+    }
+  ],
+  "also_noticed": [],
+  "watching": [
+    {
+      "id": "averaging_down",
+      "label": "Adds to losing positions (averaging down)",
+      "kind": "costed",
+      "cost": 35792.0,
+      "p_value": 0.0446,
+      "evidence": {
+        "averaged_positions": 32,
+        "added_leg_loss_rate": 0.781,
+        "added_leg_avg_return": -0.105,
+        "other_trades_avg_return": -0.041,
+        "net_on_these_positions": -110985.0
+      },
+      "counterfactual": "Net P&L if you had kept only your first entry on these positions",
+      "n": 32,
+      "status": "watching"
+    }
+  ],
+  "not_reported": [
+    {
+      "id": "averaging_down",
+      "reason": "p=0.045 >= 0.01 (could be noise)"
+    },
+    {
+      "id": "fast_reentry_after_loss",
+      "reason": "p=0.041 >= 0.01 (could be noise)"
+    },
+    {
+      "id": "expiry_day_trading",
+      "reason": "slice n=0 < 8"
+    },
+    {
+      "id": "late_session_trading",
+      "reason": "slice n=0 < 8"
+    },
+    {
+      "id": "overtrading",
+      "reason": "slice n=0 < 8"
+    },
+    {
+      "id": "holds_losers_longer",
+      "reason": "hold ratio 1.19 < 1.5"
+    }
+  ]
+}

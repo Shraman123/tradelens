@@ -87,4 +87,68 @@ Run it and report results. If any check fails, fix the prompt, not the checker, 
 
 Start by reading the files and giving me the plan.
 ```
+
+---
+
+## 2. Go-ahead prompts (Claude Code)
+
+- `yes` — approved installing Node/Git/Python via winget and starting on the narration layer.
+- On being asked how to handle the missing `ANTHROPIC_API_KEY`, chose "you provide a key" (real API calls, not self-authored narration) over the fallback option.
+- `no billing bro cab i use free ai keys any groq or deepseek` — after the Anthropic key came back with insufficient credit, asked to switch to a free provider. Result: added a `--provider` switch to `narrate.py` (`anthropic` / `groq`), defaulting to Groq (genuinely free, no card; DeepSeek is prepaid like Anthropic so was ruled out). See narrate.py's `call_groq`.
+
+## 3. Narration system prompt iterations (the LLM-facing prompt, not a Claude Code prompt)
+
+Each version is saved in full under `prompts/`. Summary of what changed and why (the "why" for each failure has its own `*_FAILED.notes.md` next to the saved version):
+
+| Version | File | Result |
+|---|---|---|
+| v1 | `narration_system_v1_FAILED.md` | **Failed** (caught by manual read, not by `eval_narration.py`'s 4 checks): sent the model raw `evidence` floats and told it not to invent numbers, but never said how to format the numbers it was allowed to use. It pasted JSON floats verbatim ("cost you 105732.0", "win rate of 0.281") — traceable, but not plain English, and not something a broker app should show a user. Also: Sara's (insufficient-data) closing used the word "habit" while honestly explaining there wasn't one yet, failing the state-fidelity check as specified. |
+| v2 | `narration_system_v2_FAILED.md` | **Failed** (`state_fidelity`, Arjun): fixed v1's two failures by having `narrate.py` pre-format every number into its exact display string (₹ Indian grouping, %, ratios) and telling the model those are text to copy, not numbers to interpret. But rule 3's own example text said "not yet a confirmed habit" — the model echoed that phrase almost verbatim, word "habit" included. Self-inflicted: I demonstrated the exact word I was telling it to avoid. |
+| v3 | `narration_system_v3_FAILED.md` | **Failed** (caught by manual read, not automated): fixed v2 by explicitly banning the literal word "habit" in watching notes, even negated. All 4 automated checks passed for all 4 personas — but Vikram's (nothing-found) closing read "Pick one rule to focus on for next month," and Vikram has zero qualified habits. The closing instruction was unconditional ("nudging toward picking one rule") when it should only apply when a habit exists to pick. |
+| v4 | `narration_system.md` (current) | **Passed.** Closing instruction made conditional on `habits` being non-empty; when empty, forbids "pick/choose/focus on/apply a rule" language and asks for an honest, encouraging line instead. All 4 personas pass all 4 `eval_narration.py` checks (number tracing, advice filter, state fidelity; stability run separately, see eval_report.md). |
+
+| v5 | `narration_system.md` (current) | **Passed** number tracing / advice filter / state fidelity for all 4 personas. First 5x stability run (real `python narrate.py --stability 5`, 20 Groq calls) still in progress at time of writing — see `eval_report.md` for the final numbers once complete. |
+
+v4's 5x stability run (also real, 20 Groq calls) found genuine content-selection variance, not random noise: `why_it_matters` cited a different subset of a habit's evidence fields each run (nothing invented, just inconsistent which facts appeared), a `watching` note sometimes stated a cost figure and sometimes didn't, and Sara's insufficient-data headline sometimes restated the trade count and sometimes didn't — v4 left all three optional. v5's fix: for a habit, `why_it_matters` must cite the cost *and every* evidence field, every time (completeness, not curation); `watching`/`also_noticed` notes must never contain a number, full stop; headline/closing must never contain a number, full stop (the UI shows exact figures directly). Removing the optionality is what removing the instability required — an LLM asked to freely choose what to include will choose differently run to run by construction. Full detail in `prompts/narration_system_v4_FAILED.notes.md`.
+
+Provider/model used throughout: Groq, `openai/gpt-oss-120b`, temperature 0.2.
+
+## 4. Reliability incident during the v5 stability run (2026-09-11)
+
+Mid-batch (run 5/5 for `neha_expiry_day`, ~9 calls into a 20-call stability
+run), Groq returned a 200 OK whose message content wasn't valid JSON.
+`narrate.py` only retried HTTP-level failures at the time, not a
+malformed-*content* response inside a successful HTTP call, so it crashed
+the whole batch instead of retrying that one call.
+
+**Fix, two parts:**
+1. Moved JSON parsing inside the retry loop in `_post` (a bad-content
+   response now retries like any other transient failure), and separately
+   added a self-check pass in `narrate_persona` — after generating, validate
+   the output against the same `check_number_tracing` / `check_advice_filter`
+   / `check_state_fidelity` functions `eval_narration.py` uses, and
+   regenerate (up to 2 extra attempts) if any fail. This is also what caught
+   and would auto-retry the digit-insertion bug below.
+2. Added `STATS` counters in `narrate.py` (top-level calls, malformed-JSON
+   retries, network/HTTP retries, self-check retries) so future runs report
+   a real malformed-output rate instead of a guess. **Caveat:** this specific
+   incident predates the counter, so its exact rate isn't recorded — only
+   that it happened once in roughly 60-70 calls across all runs so far
+   (rough, not measured). The existing prompt already said "Return only a
+   JSON object, no prose outside it" at the top of the Output Format
+   section, so this reads as an infrequent model-reliability flake on the
+   free tier, not a demonstrated prompt-content gap — I'm holding off on a
+   v6 prompt reinforcement ("no markdown fences", repeated JSON-only
+   instruction) unless a future run's *measured* rate (via the new counters)
+   comes in meaningfully above a few percent. Rerunning stability with the
+   fix in place succeeded 20/20.
+
+Separately, that same crashed run's completed portion surfaced a genuine
+content bug (not a crash): one of the 5 `neha_expiry_day` runs said "a loss
+of ₹9,449" for a field where every other run correctly said "₹449" — same
+`rest_avg` evidence value (-449.0), a digit inserted by the model despite
+the value being handed to it as a pre-formatted, copy-verbatim string. This
+is exactly what the new self-check retry (point 1 above) is meant to catch
+automatically going forward, and it's now covered in `eval_narration.py`'s
+own number-tracing logic being applied per-generation, not only at the end.
 </content>

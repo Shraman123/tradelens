@@ -1,0 +1,17 @@
+{
+  "headline": "A key sizing habit is impacting your results.",
+  "habits": {
+    "size_up_after_loss": {
+      "why_it_matters": "The cost of this habit was \u20b91,05,732. It happened in 96 after\u2011loss trades where the median entry size after a loss was \u20b912,562 versus the usual median of \u20b96,578, giving a size ratio of 1.91x. Those trades resulted in a loss of \u20b91,95,375, with an after\u2011loss win rate of 28% compared with a 39% win rate otherwise.",
+      "rule": "After a loss, your next entry is your usual size."
+    }
+  },
+  "watching": {
+    "averaging_down": {
+      "note": "Adding to losing positions is starting to appear and is worth watching."
+    }
+  },
+  "closing": "Consider applying the rule \u201cAfter a loss, your next entry is your usual size\u201d next month.",
+  "persona": "arjun_revenge_sizer",
+  "also_noticed": {}
+}

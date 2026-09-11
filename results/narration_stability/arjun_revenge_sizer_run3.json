@@ -1,0 +1,17 @@
+{
+  "headline": "A clear pattern emerged in your trade sizing.",
+  "habits": {
+    "size_up_after_loss": {
+      "why_it_matters": "After losing trades you increased your entry size, which cost you \u20b91,05,732. In the 96 after\u2011loss trades the median entry was \u20b912,562 compared with your usual median of \u20b96,578, a size ratio of 1.91x, and these trades produced a loss of \u20b91,95,375 with a win rate of 28% versus 39% otherwise.",
+      "rule": "After a loss, your next entry is your usual size."
+    }
+  },
+  "watching": {
+    "averaging_down": {
+      "note": "Adding to losing positions is worth watching as it may increase overall losses."
+    }
+  },
+  "closing": "Consider applying the rule \"After a loss, your next entry is your usual size.\" next month.",
+  "persona": "arjun_revenge_sizer",
+  "also_noticed": {}
+}

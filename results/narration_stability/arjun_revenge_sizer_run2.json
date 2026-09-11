@@ -1,0 +1,17 @@
+{
+  "headline": "You\u2019re seeing a costly pattern after losses.",
+  "habits": {
+    "size_up_after_loss": {
+      "why_it_matters": "The pattern cost you \u20b91,05,732 and was seen in 96 trades where after a loss you entered with a median size of \u20b912,562 versus your usual median size of \u20b96,578, a size ratio of 1.91x. Those after\u2011loss trades produced a loss of \u20b91,95,375 and had a win rate of 28%, while your other trades posted a win rate of 39%.",
+      "rule": "After a loss, your next entry is your usual size."
+    }
+  },
+  "watching": {
+    "averaging_down": {
+      "note": "Adding to losing positions is starting to show up and is worth keeping an eye on."
+    }
+  },
+  "closing": "Consider applying the rule \u201cAfter a loss, your next entry is your usual size\u201d next month.",
+  "persona": "arjun_revenge_sizer",
+  "also_noticed": {}
+}

@@ -1,0 +1,17 @@
+{
+  "headline": "You\u2019re losing money by increasing size after a loss",
+  "habits": {
+    "size_up_after_loss": {
+      "why_it_matters": "Increasing your entry size after a loss cost you \u20b91,05,732. The after\u2011loss trades resulted in a loss of \u20b91,95,375 and a win rate of 28%, compared with a win rate of 39% otherwise.",
+      "rule": "After a loss, your next entry is your usual size."
+    }
+  },
+  "watching": {
+    "averaging_down": {
+      "note": "Adding to losing positions is emerging, so keep an eye on it."
+    }
+  },
+  "closing": "Consider applying the rule above in the coming month.",
+  "persona": "arjun_revenge_sizer",
+  "also_noticed": {}
+}

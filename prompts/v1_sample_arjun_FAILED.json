@@ -1,0 +1,17 @@
+{
+  "headline": "Your trading shows a costly size\u2011up after losses",
+  "habits": {
+    "size_up_after_loss": {
+      "why_it_matters": "You increased your entry size after a loss in 96 trades, using a median size of 12562.0 versus 6578.0 normally, which cost you 105732.0 and contributed to a net loss of -195375.0 with a win rate of 0.281 compared to 0.394 otherwise.",
+      "rule": "After a loss, your next entry is your usual size."
+    }
+  },
+  "watching": {
+    "averaging_down": {
+      "note": "This pattern is starting to show up and is worth watching."
+    }
+  },
+  "closing": "Focus on applying the size\u2011control rule next month",
+  "persona": "arjun_revenge_sizer",
+  "also_noticed": {}
+}

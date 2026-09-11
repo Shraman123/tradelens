@@ -1,0 +1,28 @@
+{
+  "persona": "sara_thin_data",
+  "summary": {
+    "closed_trades": 18,
+    "trading_days": 8,
+    "net_pnl": -6123.0,
+    "gross_pnl": -4905.0,
+    "charges": 1218.0,
+    "win_rate": 0.278,
+    "ignored_orders": 0,
+    "window": "2026-07-01 to 2026-08-28",
+    "review_month": {
+      "month": "2026-08",
+      "closed_trades": 9,
+      "trading_days": 4,
+      "net_pnl": -12352.0,
+      "charges": 630.0,
+      "win_rate": 0.111
+    }
+  },
+  "insufficient_data": true,
+  "message": "18 closed trades; need at least 20 before calling anything a habit.",
+  "note": null,
+  "habits": [],
+  "also_noticed": [],
+  "watching": [],
+  "not_reported": []
+}

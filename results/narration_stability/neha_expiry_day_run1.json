@@ -1,0 +1,13 @@
+{
+  "headline": "A repeatable pattern shows up on expiry\u2011day trades.",
+  "habits": {
+    "expiry_day_trading": {
+      "why_it_matters": "The cost of this pattern is\u202f\u20b91,16,891, coming from 90 expiry\u2011day trades that together produced a loss of\u202f\u20b91,16,891. On average each of those trades lost\u202f\u20b91,299, with a win rate of\u202f29% and an average return loss of\u202f28%. By contrast, the other 124 trades had an average return loss of\u202f5%, an average loss of\u202f\u20b9449 and a win rate of\u202f37%.",
+      "rule": "Set a hard cap on expiry-day trades before the open."
+    }
+  },
+  "closing": "Consider using this rule to shape your expiry\u2011day trading next month.",
+  "persona": "neha_expiry_day",
+  "watching": {},
+  "also_noticed": {}
+}

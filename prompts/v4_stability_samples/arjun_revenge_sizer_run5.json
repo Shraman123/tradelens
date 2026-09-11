@@ -1,0 +1,17 @@
+{
+  "headline": "Your trade sizing after losses is costing you.",
+  "habits": {
+    "size_up_after_loss": {
+      "why_it_matters": "Sizing up after a loss cost you \u20b91,05,732, leading to a loss of \u20b91,95,375. Your win rate after those trades was 28% versus 39% on other trades.",
+      "rule": "After a loss, your next entry is your usual size."
+    }
+  },
+  "watching": {
+    "averaging_down": {
+      "note": "Adding to losing positions is emerging and worth keeping an eye on."
+    }
+  },
+  "closing": "Consider applying the rule about keeping your entry size after a loss for the next month.",
+  "persona": "arjun_revenge_sizer",
+  "also_noticed": {}
+}

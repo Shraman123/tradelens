@@ -60,11 +60,16 @@ def all_numbers(obj) -> set:
             for v in o:
                 walk(v)
         elif isinstance(o, (int, float)) and not isinstance(o, bool):
-            out.add(round(float(o), 4))
-            if 0 <= o <= 1:
-                out.add(round(o * 100))
-                out.add(round(o * 100, 1))
-            out.add(round(o))
+            # Both signed and absolute-value forms: narration text drops the
+            # minus sign and says "a loss of X" instead (see narrate.py's
+            # _rupees_signed / _pct_signed), so "195375" must trace back to
+            # a JSON value of -195375.0 just as well as one of 195375.0.
+            for val in (float(o), abs(float(o))):
+                out.add(round(val, 4))
+                out.add(round(val))
+                if 0 <= val <= 1:
+                    out.add(round(val * 100))
+                    out.add(round(val * 100, 1))
         elif isinstance(o, str):
             for m in NUMBER_RE.findall(o):
                 try:
@@ -98,11 +103,27 @@ def narration_text(narration: dict) -> str:
 
 def check_number_tracing(persona, analysis, narration):
     allowed = all_numbers(analysis)
+    problems = []
+
     text = narration_text(narration)
     used = narration_numbers(text)
     # tolerance of 1 absolute unit covers ordinary human rounding (e.g. 33.7% -> "34%")
     orphans = [n for n in used if not any(abs(n - a) <= 1 for a in allowed)]
-    return (len(orphans) == 0, f"orphan numbers: {orphans}" if orphans else "ok")
+    if orphans:
+        problems.append(f"orphan numbers: {orphans}")
+
+    # v5: headline/closing are tone, never data (stability requirement - see
+    # narration_system_v4_FAILED.notes.md), and watching/also_noticed are
+    # never given a specific figure at all (see rule 3).
+    for field in ("headline", "closing"):
+        if narration_numbers(narration.get(field, "")):
+            problems.append(f"{field} contains a number (must be zero): {narration[field]!r}")
+    for section in ("watching", "also_noticed"):
+        for hid, w in narration.get(section, {}).items():
+            if narration_numbers(w.get("note", "")):
+                problems.append(f"{section}.{hid} note contains a number (must be zero): {w['note']!r}")
+
+    return (len(problems) == 0, "; ".join(problems) if problems else "ok")
 
 
 def check_advice_filter(persona, analysis, narration):
