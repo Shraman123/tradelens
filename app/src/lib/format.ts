@@ -46,6 +46,12 @@ export function pct(n: number): string {
   return `${Math.round(n * 100)}%`
 }
 
+/** A signed rate/return, compact for a table cell: -0.277 -> "-28%". */
+export function pctSigned(n: number): string {
+  const v = Math.round(n * 100)
+  return v > 0 ? `+${v}%` : `${v}%`
+}
+
 export function ratio(n: number): string {
   return `${n.toFixed(2)}x`
 }

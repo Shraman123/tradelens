@@ -1,13 +1,18 @@
-import type { Analysis, Narration, PersonaData, PersonaMeta } from "../types"
+import type { Analysis, Narration, OrderRow, PersonaData, PersonaMeta } from "../types"
+import { parseOrdersCsv } from "../lib/orders"
 
 import arjunAnalysis from "./arjun_revenge_sizer_analysis.json"
 import arjunNarration from "./arjun_revenge_sizer_narration.json"
+import arjunOrdersCsv from "./arjun_revenge_sizer_orders_jul-aug-2026.csv?raw"
 import nehaAnalysis from "./neha_expiry_day_analysis.json"
 import nehaNarration from "./neha_expiry_day_narration.json"
+import nehaOrdersCsv from "./neha_expiry_day_orders_jul-aug-2026.csv?raw"
 import vikramAnalysis from "./vikram_control_analysis.json"
 import vikramNarration from "./vikram_control_narration.json"
+import vikramOrdersCsv from "./vikram_control_orders_jul-aug-2026.csv?raw"
 import saraAnalysis from "./sara_thin_data_analysis.json"
 import saraNarration from "./sara_thin_data_narration.json"
+import saraOrdersCsv from "./sara_thin_data_orders_jul-aug-2026.csv?raw"
 
 // Metadata for the persona switcher — name, one-line description, and what
 // state each demonstrates. Sourced from habit_library.md's eval-persona table
@@ -40,11 +45,11 @@ const META: PersonaMeta[] = [
   },
 ]
 
-const RAW: Record<string, { analysis: Analysis; narration: Narration }> = {
-  arjun_revenge_sizer: { analysis: arjunAnalysis as Analysis, narration: arjunNarration as Narration },
-  neha_expiry_day: { analysis: nehaAnalysis as Analysis, narration: nehaNarration as Narration },
-  vikram_control: { analysis: vikramAnalysis as Analysis, narration: vikramNarration as Narration },
-  sara_thin_data: { analysis: saraAnalysis as Analysis, narration: saraNarration as Narration },
+const RAW: Record<string, { analysis: Analysis; narration: Narration; orders: OrderRow[] }> = {
+  arjun_revenge_sizer: { analysis: arjunAnalysis as Analysis, narration: arjunNarration as Narration, orders: parseOrdersCsv(arjunOrdersCsv) },
+  neha_expiry_day: { analysis: nehaAnalysis as Analysis, narration: nehaNarration as Narration, orders: parseOrdersCsv(nehaOrdersCsv) },
+  vikram_control: { analysis: vikramAnalysis as Analysis, narration: vikramNarration as Narration, orders: parseOrdersCsv(vikramOrdersCsv) },
+  sara_thin_data: { analysis: saraAnalysis as Analysis, narration: saraNarration as Narration, orders: parseOrdersCsv(saraOrdersCsv) },
 }
 
 export const PERSONAS: PersonaData[] = META.map((meta) => ({ ...meta, ...RAW[meta.id] }))

@@ -95,7 +95,19 @@ export interface PersonaMeta {
   demonstrates: string
 }
 
+/** One row of raw order history (order_id,timestamp,symbol,side,qty,price,status). */
+export interface OrderRow {
+  order_id: string
+  timestamp: string
+  symbol: string
+  side: "BUY" | "SELL"
+  qty: number
+  price: number
+  status: string
+}
+
 export interface PersonaData extends PersonaMeta {
   analysis: Analysis
   narration: Narration
+  orders: OrderRow[]
 }

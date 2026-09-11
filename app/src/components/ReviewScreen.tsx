@@ -23,9 +23,15 @@ function StatRow({ summary }: { summary: Summary }) {
   )
 }
 
-function HabitCard({ habit, note, rule }: { habit: Habit; note?: string; rule?: string }) {
+function HabitCard({
+  habit, note, rule, onOpen,
+}: { habit: Habit; note?: string; rule?: string; onOpen: () => void }) {
   return (
-    <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4">
+    <button
+      type="button"
+      onClick={onOpen}
+      className="w-full rounded-xl border border-neutral-800 bg-neutral-900 p-4 text-left transition-colors hover:border-neutral-700"
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <span className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">
@@ -47,7 +53,8 @@ function HabitCard({ habit, note, rule }: { habit: Habit; note?: string; rule?: 
           <p className="mt-0.5 text-sm text-neutral-100">{rule}</p>
         </div>
       )}
-    </div>
+      <p className="mt-3 text-xs font-medium text-amber-400/80">View evidence & example trades →</p>
+    </button>
   )
 }
 
@@ -83,7 +90,7 @@ function NotReportedList({ items }: { items: NotReported[] }) {
   )
 }
 
-export function ReviewScreen({ persona }: { persona: PersonaData }) {
+export function ReviewScreen({ persona, onOpenHabit }: { persona: PersonaData; onOpenHabit: (id: string) => void }) {
   const { analysis, narration } = persona
   const hasHabits = analysis.habits.length > 0
 
@@ -102,7 +109,13 @@ export function ReviewScreen({ persona }: { persona: PersonaData }) {
       {hasHabits && (
         <div className="space-y-3">
           {analysis.habits.map((h) => (
-            <HabitCard key={h.id} habit={h} note={narration.habits[h.id]?.why_it_matters} rule={narration.habits[h.id]?.rule} />
+            <HabitCard
+              key={h.id}
+              habit={h}
+              note={narration.habits[h.id]?.why_it_matters}
+              rule={narration.habits[h.id]?.rule}
+              onOpen={() => onOpenHabit(h.id)}
+            />
           ))}
         </div>
       )}
