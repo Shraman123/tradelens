@@ -67,6 +67,10 @@ python run_evals.py heldout 2                 # detector layer ship-bar table (6
 python eval_narration.py                       # narration layer: number tracing, advice filter, state fidelity, stability
 python narrate.py --stability 5 --delay 20     # generate the 5x reruns eval_narration.py's stability check reads
                                                  # (--delay keeps Groq's free-tier 8000 TPM limit happy; omit for Anthropic)
+
+cd app && npm test                              # TS/Python cross-check: the in-app raw-order viewer's position
+                                                 # grouping (a duplicate of detectors.py's normalize()) reproduces
+                                                 # every example_trade's entry_size_rs and net_pnl independently
 ```
 
 ## Assumptions baked into the synthetic data (not Nubra's actual numbers)
@@ -84,9 +88,21 @@ From `generate_personas.py` / `habit_library.md`:
 - Detector thresholds (p < 0.01, ≥20 trades, materiality bar) are judgment
   calls tuned on synthetic dev seeds — see `habit_library.md`'s gates table
 
+## Screens
+
+All five from the brief are built: Persona switcher (always visible) →
+Review → Habit detail (evidence table + example trades + raw-order
+drill-down) → Commit (one rule, top habit pre-selected) → Next-month
+preview (explicitly mocked — see `NextMonthPreviewScreen.tsx`). Vikram and
+Sara never reach Commit or the preview — there's nothing for them to commit
+to, so the entry point simply isn't rendered, not disabled.
+
 ## Known gaps / next steps
 
 - Narration regeneration copies into `app/src/data/` manually; a build step
   or symlink would remove that step.
-- No screens built yet as of this note — see `PROMPTS_LOG.md` for current
-  status; this file will be updated as screens land.
+- Not yet deployed to a public URL (Vercel or equivalent) — still runs
+  locally via `npm run dev` / `npm run build`.
+- Sara's narration stability is confirmed on 1 of 5 reruns (Groq's free-tier
+  daily quota ran out mid-batch) plus a structural argument for why the
+  other 4 aren't in real doubt — see `eval_report.md`'s narration ship bar.
