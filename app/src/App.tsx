@@ -3,8 +3,9 @@ import { PERSONAS, getPersona } from "./data/personas"
 import { PersonaSwitcher } from "./components/PersonaSwitcher"
 import { ReviewScreen } from "./components/ReviewScreen"
 import { HabitDetailScreen } from "./components/HabitDetailScreen"
+import { CommitScreen } from "./components/CommitScreen"
 
-type View = { screen: "review" } | { screen: "habitDetail"; habitId: string }
+type View = { screen: "review" } | { screen: "habitDetail"; habitId: string } | { screen: "commit" }
 
 export default function App() {
   const [personaId, setPersonaId] = useState(PERSONAS[0].id)
@@ -12,7 +13,8 @@ export default function App() {
   const persona = getPersona(personaId)
 
   // Switching persona always drops back to that persona's Review screen —
-  // a habitId from one persona's detail view has no meaning for another.
+  // a habitId (or a commit-in-progress) from one persona has no meaning
+  // for another, and Vikram/Sara have no Commit screen to land on anyway.
   function selectPersona(id: string) {
     setPersonaId(id)
     setView({ screen: "review" })
@@ -21,11 +23,17 @@ export default function App() {
   return (
     <div className="min-h-screen bg-neutral-950 pb-16">
       <PersonaSwitcher personas={PERSONAS} selectedId={personaId} onSelect={selectPersona} />
-      {view.screen === "review" ? (
-        <ReviewScreen persona={persona} onOpenHabit={(habitId) => setView({ screen: "habitDetail", habitId })} />
-      ) : (
+      {view.screen === "review" && (
+        <ReviewScreen
+          persona={persona}
+          onOpenHabit={(habitId) => setView({ screen: "habitDetail", habitId })}
+          onCommit={() => setView({ screen: "commit" })}
+        />
+      )}
+      {view.screen === "habitDetail" && (
         <HabitDetailScreen persona={persona} habitId={view.habitId} onBack={() => setView({ screen: "review" })} />
       )}
+      {view.screen === "commit" && <CommitScreen persona={persona} onBack={() => setView({ screen: "review" })} />}
     </div>
   )
 }

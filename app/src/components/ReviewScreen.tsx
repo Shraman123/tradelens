@@ -90,7 +90,13 @@ function NotReportedList({ items }: { items: NotReported[] }) {
   )
 }
 
-export function ReviewScreen({ persona, onOpenHabit }: { persona: PersonaData; onOpenHabit: (id: string) => void }) {
+interface Props {
+  persona: PersonaData
+  onOpenHabit: (id: string) => void
+  onCommit: () => void
+}
+
+export function ReviewScreen({ persona, onOpenHabit, onCommit }: Props) {
   const { analysis, narration } = persona
   const hasHabits = analysis.habits.length > 0
 
@@ -145,6 +151,18 @@ export function ReviewScreen({ persona, onOpenHabit }: { persona: PersonaData; o
       <NotReportedList items={analysis.not_reported} />
 
       <p className="border-t border-neutral-800 pt-4 text-sm text-neutral-400">{narration.closing}</p>
+
+      {/* No habits -> nothing to commit to. Vikram/Sara never see this CTA,
+          not a disabled version of it — there is no Commit screen for them. */}
+      {hasHabits && (
+        <button
+          type="button"
+          onClick={onCommit}
+          className="w-full rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm font-semibold text-amber-400 transition-colors hover:bg-amber-500/20"
+        >
+          Commit to a rule for next month
+        </button>
+      )}
     </div>
   )
 }
