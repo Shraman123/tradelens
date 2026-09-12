@@ -371,3 +371,78 @@ Arjun's regenerated rule (fix 4b), copied verbatim by the model from
 > "After a loss, your next entry stays at your usual size — about ₹6,600.
 > If you want to size up, it has to be a separate decision made before the
 > session, not after a loss."
+
+## 7. Two copy fixes on the "nothing found" screen (Claude Code, 2026-09-12)
+
+```
+Two copy fixes on the "nothing found" screen. (1) Four ruled-out rows repeat the identical phrase "happened sometimes, but not consistently enough…". Vary the phrasing so the actual reasons read differently (failed significance vs confounded vs too few). (2) In the closing line, "so the lack of a finding does not mean the period was successful" doesn't follow logically from the first clause — split it into two sentences. Don't change any numbers. Re-run eval_narration.py after.
+```
+
+**Fix (1) was code, not the LLM** — same as fix 1 in section 5: the
+`p=X >= 0.01 (could be noise)` reason format was always mapped to one fixed
+sentence in `habitLabels.ts`'s `humanizeReason()`, regardless of how large
+X actually was. Vikram's four "not statistically reliable" rows have p =
+0.764, 0.727, 0.263, 0.352 — genuinely different degrees of "not a
+pattern" (0.764/0.727 are indistinguishable from pure chance; 0.263/0.352
+are more borderline) — but all four got the identical phrase. Fixed by
+tiering the phrase on the p-value already in the string (5 tiers: <0.05,
+<0.1, <0.3, <0.6, ≥0.6), still never displaying the number itself. This is
+not "make up 4 different reasons" — two of Vikram's four (0.764, 0.727)
+are close enough that giving them the same tier, and therefore the same
+sentence, is the honest answer; forcing a 4th distinct phrase onto two
+p-values that are genuinely almost equal would have been the opposite
+mistake (fabricating a distinction the data doesn't support). Result:
+3 distinct phrases across Vikram's 4 significance-based rows instead of 1.
+
+**Fix (2) is narration content** (v6 → v7, `prompts/narration_system.md`).
+v6's closing guidance asked for "no single behaviour repeated... **so** the
+lack of a finding does not mean the period was successful" as one
+acceptable shape — technically two ideas, but v6 never said they couldn't
+be joined with "so", and the model took that opening. The bug: "nothing
+was confirmed" doesn't *cause* or *prove* "the window wasn't fine" — they
+are two separate facts (a technical finding, and a caution against
+misreading it), not premise-and-conclusion. v7 makes this explicit: the
+closing is now three sentences, not two, with a standing instruction that
+sentences 1 and 2 must never be joined by "so"/"therefore"/"which
+means"/"meaning" because one doesn't logically follow from the other.
+Regenerated (all four personas, since the prompt file is shared); Vikram's
+new closing:
+
+> "Across the 101 trades in this window, no single behavior repeated often
+> enough or incurred enough cost to be confirmed. That does not mean the
+> window was successful; the loss shown elsewhere is not linked to a
+> recurring, provable behavior. We'll review the data again in the next
+> cycle."
+
+No numbers were changed anywhere in either fix, per the brief — the trade
+count (101) is the same value from the same source (`summary.review_month.
+closed_trades`) as before; only the sentence structure and the ruled-out
+phrasing logic changed.
+
+`eval_narration.py` (number tracing / advice filter / state fidelity, as
+asked — stale v6 stability run files deleted rather than left in place,
+same reasoning as section 6):
+
+```
+arjun_revenge_sizer: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+
+neha_expiry_day: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+
+sara_thin_data: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+
+vikram_control: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+
+ALL PASS
+```

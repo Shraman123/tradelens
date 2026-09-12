@@ -81,15 +81,17 @@ Measured on held-out seeds, 60-day window:
 Zero orphan numbers, zero advice-word hits, zero habit-language misuse,
 identical output across reruns — across all four personas.
 
-**Met**, fully, on the v6 prompt (see `PROMPTS_LOG.md` section 6 — window
-wording, the "nothing found" closing, the concrete `size_up_after_loss`
-rule). Number tracing / advice filter / state fidelity: 4/4 personas, every
-generation. Stability: **4/4 personas, a genuine 5/5** — identical
-habit/watching ids and identical numbers across every rerun, including
-Sara and Vikram, whose v5-era results (5/5 for arjun and neha, but only
-3/5 and 1/5 respectively) were cut short by a free-tier daily quota rather
-than any content issue. This is the first time all four have a complete,
-literal 5/5.
+**Met** on number tracing / advice filter / state fidelity: 4/4 personas,
+every generation, on the current prompt (v7 — see `PROMPTS_LOG.md`
+sections 6-7 for the full version history: window wording and the
+concrete `size_up_after_loss` rule in v6; varied ruled-out phrasing and a
+"nothing found" closing that doesn't chain two unrelated ideas with "so"
+in v7). **Stability not currently re-verified**: v6 reached a genuine 5/5
+for all four personas (the first time that had ever been achieved — see
+`PROMPTS_LOG.md` section 6), but those runs were deleted rather than left
+in place once v7 changed the wording underneath them. Re-run
+`python narrate.py --stability 5 --delay 20` then `python eval_narration.py`
+before relying on stability again.
 
 ## Narration layer evals
 
@@ -102,26 +104,17 @@ checks in `eval_narration.py`, run against all four personas:
 | Number tracing | every ₹/%/ratio/count in the narration traces to a value in the analysis JSON | **PASS**, all 4 |
 | Advice filter | no instrument/strike/direction/prediction words anywhere | **PASS**, all 4 |
 | State fidelity | no habit-language for Vikram/Sara; "watching" never phrased as confirmed | **PASS**, all 4 |
-| Stability (5 reruns) | identical habit/watching ids and identical numbers across 5 regenerations | **PASS**: arjun 5/5, neha 5/5. Vikram 3/5 (identical; can't vary further — see below). Sara 1/5 (see below) |
+| Stability (5 reruns) | identical habit/watching ids and identical numbers across 5 regenerations | **Not currently verified for v7** — see the "Ship bar" note above and `PROMPTS_LOG.md` sections 6-7 for the full history (v6 reached a genuine 5/5 for all four personas; those runs don't speak to v7's wording) |
 
-**Why Vikram/Sara have fewer stability runs than 5, and why that's not a
-gap in practice:** Groq's free tier caps both a per-minute and a *per-day*
-token budget (200k/day); five iterations of the narration prompt (v1-v5),
-each re-verified with a fresh 5x stability batch, used most of a day's quota
-before reaching these two. But unlike Arjun/Neha, Vikram and Sara have zero
-numbers available to be unstable *by construction*: v5's rules make
-`headline`/`closing` unconditionally number-free, and force `habits` /
-`watching` / `also_noticed` to all be empty whenever `insufficient_data` is
-true or nothing qualified — which is Vikram and Sara's exact situation every
-time. Every single-shot generation for both of them, across every prompt
-version from v2 onward, has independently passed number-tracing and
-state-fidelity. Getting a literal 5/5 in the stability directory for these
-two is a nice-to-have confirmation, not new information — the thing that
-would have to go wrong (the model violating rule 4 or the empty-habits rule)
-is already caught per-run by the checks above, and by `narrate_persona`'s
-own self-check retry at generation time. Re-run
-`python narrate.py --persona sara_thin_data --stability 5` once the daily
-quota resets to complete the literal count.
+Every single-shot generation, on every prompt version from v2 onward, has
+independently passed number-tracing and state-fidelity regardless of
+whether a full 5x stability batch was current at the time — the thing
+stability is checking for (the model violating a numeric or empty-habits
+rule) is already caught per-run by the checks above, and by
+`narrate_persona`'s own self-check retry at generation time. A full
+stability batch against the current prompt is still worth having before
+calling the narration layer done; see `PROMPTS_LOG.md` for whether one
+exists for v7 by the time you're reading this.
 
 ## Not yet tested
 

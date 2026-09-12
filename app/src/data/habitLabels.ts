@@ -43,8 +43,19 @@ export function habitLabel(id: string): string {
 export function humanizeReason(reason: string, labelFor: (id: string) => string = habitLabel): string {
   let m: RegExpMatchArray | null
 
-  if (/^p=[\d.]+ >= [\d.]+ \(could be noise\)$/.test(reason)) {
-    return "happened sometimes, but not consistently enough across your trades to call it a pattern"
+  if ((m = reason.match(/^p=([\d.]+) >= [\d.]+ \(could be noise\)$/))) {
+    // Four of these can appear on one screen (e.g. Vikram's) with the same
+    // underlying explanation — "not statistically reliable" — but very
+    // different p-values (0.04 is a near-miss; 0.76 is indistinguishable
+    // from chance). Tiering by the actual magnitude already in the string
+    // gives each row an honestly different sentence instead of a repeated
+    // template, without displaying the number itself.
+    const p = Number(m[1])
+    if (p < 0.05) return "came right up to the edge of looking consistent, but didn't quite clear the bar"
+    if (p < 0.1) return "came fairly close to a consistent pattern, but not reliably enough across your trades"
+    if (p < 0.3) return "showed up more than a coincidence alone might suggest, but not consistently enough to call it a pattern"
+    if (p < 0.6) return "showed up sometimes, but not consistently enough across your trades to call it a pattern"
+    return "happened about as often as plain chance alone would predict — not a pattern"
   }
 
   if (/^size ratio [\d.]+ < [\d.]+$/.test(reason)) {
