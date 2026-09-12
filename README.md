@@ -33,6 +33,10 @@ in `PROMPTS_LOG.md`.
   but wasn't used for the committed narrations (see `PROMPTS_LOG.md` — the
   Anthropic key on hand had no API credit; Groq was substituted).
 
+## Live demo
+
+**https://app-azure-zeta-42.vercel.app** — no login required.
+
 ## Run it
 
 ```
@@ -101,8 +105,8 @@ to, so the entry point simply isn't rendered, not disabled.
 
 - Narration regeneration copies into `app/src/data/` manually; a build step
   or symlink would remove that step.
-- Not yet deployed to a public URL (Vercel or equivalent) — still runs
-  locally via `npm run dev` / `npm run build`.
+- Deployed to Vercel: https://app-azure-zeta-42.vercel.app (connected to
+  the `Shraman123/tradelens` GitHub repo, so pushes to `main` auto-deploy).
 - Sara's narration stability is confirmed on 1 of 5 reruns (Groq's free-tier
   daily quota ran out mid-batch) plus a structural argument for why the
   other 4 aren't in real doubt — see `eval_report.md`'s narration ship bar.
