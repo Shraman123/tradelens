@@ -88,11 +88,43 @@ wording and the concrete `size_up_after_loss` rule in v6; varied
 ruled-out phrasing and a "nothing found" closing that doesn't chain two
 unrelated ideas with "so" in v7; a redundant-phrase guardrail, found by
 reading the live app rather than by any automated check, in v8).
-**Stability not currently re-verified**: v6 and v7 each independently
-reached a genuine 5/5 for all four personas at the time (sections 6-7),
-but those runs were deleted rather than left in place once v8 changed the
-wording underneath them. Re-run `python narrate.py --stability 5 --delay 20`
-then `python eval_narration.py` before relying on stability again.
+
+**Stability against v8, honestly: incomplete, not a full 5/5.** A fresh
+5x-per-persona batch (20 Groq calls) was started and ran into Groq's
+*daily* token quota (200,000 TPD, not the per-minute limit) partway
+through, on top of the day's earlier v6/v7 stability batches and several
+individual regenerations. What actually completed:
+
+- **Arjun: a genuine 5/5** — 5 runs completed, identical habit ids and
+  identical numbers across all of them.
+- **Neha: 1/5 completed**, not 5. That single run is worth noting on its
+  own terms, not just as a partial count: it initially tripped the new
+  `check_redundant_framing` self-check (the same "a loss of a loss of ₹X"
+  failure mode from section 8) and `narrate_persona`'s runtime retry
+  caught it and regenerated automatically before the run was saved — the
+  guardrail added in v8 working against a live recurrence, not just the
+  original bug. One run cannot establish stability by itself (there's
+  nothing to compare it against), so this is not treated as a stability
+  pass, only as a data point.
+- **Vikram and Sara: not re-run against v8 at all** — the daily quota was
+  exhausted before either got a single call in this batch. Their last
+  *verified* stability result is the v6 run (section 6): a genuine 5/5
+  for both. That result doesn't speak to v8's wording, but the structural
+  argument from section 6 still holds independently of any specific
+  prompt version: v8, like every version since v5, makes `headline` and
+  `closing` unconditionally number-free for both of them (Vikram's one
+  narrow trade-count exception is the sole deliberate exception, itself
+  copied verbatim from a fixed JSON field, not authored by the model), and
+  forces `habits`/`watching`/`also_noticed` to all be empty whenever
+  `insufficient_data` is true or nothing qualified — which is Vikram and
+  Sara's situation every time. There is very little surface for a prompt
+  wording change to introduce fresh instability into a screen with no
+  numbers and no habit content to vary.
+
+Re-run `python narrate.py --stability 5 --delay 20` then
+`python eval_narration.py` once Groq's daily quota resets to get a real
+5/5 for all four against v8 — this section will say so plainly when that
+happens, not before.
 
 ## Narration layer evals
 
@@ -106,7 +138,14 @@ checks in `eval_narration.py`, run against all four personas:
 | Advice filter | no instrument/strike/direction/prediction words anywhere | **PASS**, all 4 |
 | State fidelity | no habit-language for Vikram/Sara; "watching" never phrased as confirmed | **PASS**, all 4 |
 | Redundant framing (v8) | no "a loss/gain of" immediately followed by another "a loss/gain of" (a real generation duplicated one — see `PROMPTS_LOG.md` section 8) | **PASS**, all 4 |
-| Stability (5 reruns) | identical habit/watching ids and identical numbers across 5 regenerations | **Not currently verified for v8** — v6 and v7 each reached a genuine 5/5 for all four personas at the time (`PROMPTS_LOG.md` sections 6-7), but those runs don't speak to v8's wording |
+| Stability (5 reruns) | identical habit/watching ids and identical numbers across 5 regenerations | **Arjun: PASS, genuine 5/5.** Neha: 1/5 completed (`eval_narration.py` reports `[ok] 1 runs` — technically true of the one run it has, not a real stability claim). **Vikram/Sara: SKIP** — 0 runs against v8, correctly reported as `[skip] no stability runs found`, not as a pass (see the fix below) |
+
+`eval_narration.py` used to coerce "no stability runs found" into a
+printed `[ok]`, indistinguishable from a genuine pass — fixed so it now
+reports `[skip]` honestly (Vikram and Sara currently show this). This
+only changes what's *displayed*; a persona was never marked overall PASS
+or FAIL based on a missing stability run either before or after the fix,
+only on whether a run that did happen showed instability.
 
 Every single-shot generation, on every prompt version from v2 onward, has
 independently passed number-tracing and state-fidelity regardless of
@@ -116,8 +155,8 @@ rule) is already caught per-run by the checks above, and by
 `narrate_persona`'s own self-check retry at generation time. Remember that
 a stability run in `results/narration_stability/` only speaks to the
 prompt it was generated against — re-run it after any prompt edit rather
-than trust a stale pass; see `PROMPTS_LOG.md` for whether one exists for
-v8 by the time you're reading this.
+than trust a stale pass; see `PROMPTS_LOG.md` section 9 for the full v8
+stability attempt and what blocked it.
 
 ## Not yet tested
 

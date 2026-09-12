@@ -228,7 +228,14 @@ def main():
             "redundant_framing": check_redundant_framing(persona, analysis, narration),
         }
         stable_ok, stable_msg = check_stability(persona)
-        results["stability"] = (True if stable_ok is None else stable_ok, stable_msg)
+        # Store the real tri-state result (None = no runs at all) so the
+        # print loop below actually reports it as "skip", not "ok" -- v8
+        # fix: this used to coerce None to True here, which silently turned
+        # "no stability runs found" into a printed [ok], indistinguishable
+        # from a genuine pass. persona_ok already treats None as neutral
+        # (excluded from the all() below) and a real False as a hard fail,
+        # so this only changes what's displayed, not what counts as PASS.
+        results["stability"] = (stable_ok, stable_msg)
 
         persona_ok = all(ok for ok, _ in results.values() if ok is not None) and stable_ok is not False
         all_ok = all_ok and persona_ok

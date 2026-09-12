@@ -582,3 +582,57 @@ ALL PASS
 Stale v7 stability run files deleted (same reasoning as sections 6-7 —
 they validate v7's wording, not v8's). Not re-run in this pass; ask for a
 fresh one the same way as before if wanted.
+
+## 9. v8 stability check: daily quota blocks a full run (2026-09-12)
+
+```
+Run the 5x stability check against v8 for all four personas and give me the results.
+```
+
+Attempted `python narrate.py --stability 5 --delay 20` (20 Groq calls).
+Got through arjun's full 5 and one of neha's before hitting Groq's *daily*
+token quota (200,000 TPD) — a harder wall than the per-minute limit hit
+earlier in this project, not something a short retry clears. The day's
+earlier v6 and v7 stability batches plus several individual regenerations
+had already used most of the day's budget before this attempt started.
+
+**What completed, exactly:**
+- **arjun_revenge_sizer: 5/5**, identical habit ids and identical numbers
+  across all five runs.
+- **neha_expiry_day: 1/5.** That single run's first attempt tripped the
+  new `check_redundant_framing` self-check from section 8 — Groq
+  regenerated "a loss of a loss of" again, on a live call, and
+  `narrate_persona`'s runtime retry caught it and produced a corrected
+  version before the run was ever saved. This is direct evidence the v8
+  guardrail works against a real recurrence, not just the original
+  instance — but one run is not a stability result (nothing to compare it
+  against), so it isn't counted as a stability pass.
+- **vikram_control: 0/5. sara_thin_data: 0/5.** The daily quota was
+  exhausted before either got a single successful call in this batch.
+
+```
+Option 3 [accept partial evidence for now]. Update EVALS.md to state the v8 stability position honestly: Arjun 5/5 identical ids and numbers; Neha 1/5 completed, with that run tripping the redundant-framing self-check and regenerating automatically before save; Vikram and Sara not re-run against v8 due to Groq daily quota, with their earlier v6 runs and the structural argument (no numbers in prose) noted. Make sure eval_narration.py reports "no stability runs found" as SKIP, not PASS. Add the "a loss of a loss" bug to the iteration log, including that automated checks missed it and a human read caught it. Commit and push. Then stop — no more test runs tonight.
+```
+
+**A real bug found while doing this**, separate from the narration
+content itself: `eval_narration.py`'s `main()` coerced
+`check_stability`'s `None` ("no stability runs found") into `True` before
+storing it in the results dict, so the per-check print loop's own
+`"skip" if ok is None else ...` branch was dead code for stability
+specifically — a persona with zero stability runs printed
+`stability [ok] no stability runs found`, visually indistinguishable from
+a genuine pass unless you read the message text closely. Fixed by storing
+the raw tri-state result instead of coercing it; Vikram and Sara now
+correctly print `[skip]`. This never affected overall PASS/FAIL (the
+`persona_ok` calculation already excluded `None` from consideration and
+separately checked for a real `False`), only what was displayed — but
+"displayed as ok" and "is ok" need to actually agree, and they didn't.
+
+`eval_report.md` and `README.md` updated to state this exact position —
+Arjun's real 5/5, Neha's single data point (not a stability claim),
+Vikram/Sara's honest gap plus the v6 result and structural argument that
+still stand independently of it — rather than a summary number that
+overstates what actually ran tonight.
+
+No further Groq calls made after this, per the instruction to stop for
+the night.

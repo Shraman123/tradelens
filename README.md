@@ -107,13 +107,17 @@ to, so the entry point simply isn't rendered, not disabled.
   or symlink would remove that step.
 - Deployed to Vercel: https://app-azure-zeta-42.vercel.app (connected to
   the `Shraman123/tradelens` GitHub repo, so pushes to `main` auto-deploy).
-- Narration stability hasn't been re-verified since the prompt moved to v8
-  (see `PROMPTS_LOG.md` section 8 — a redundant-phrase bug found by
-  reading the live app, "produced a loss of a loss of ₹X", fixed with a
-  prompt guardrail plus a new automated `redundant_framing` check in
-  `eval_narration.py`). v6 and v7 each independently reached a genuine 5/5
-  for all four personas (sections 6-7), but those runs don't speak to v8's
-  wording. Number tracing, advice filter, state fidelity and redundant
-  framing are all confirmed passing on v8 for all four personas; run
-  `python narrate.py --stability 5 --delay 20` then `python eval_narration.py`
-  to re-check stability before relying on it.
+- Narration stability against v8 is incomplete, honestly: an attempted
+  fresh 5x-per-persona batch hit Groq's *daily* token quota partway
+  through. Arjun got a genuine 5/5. Neha completed only 1 run (that run
+  tripped the new `redundant_framing` self-check and was regenerated
+  automatically before saving — see `PROMPTS_LOG.md` section 9). Vikram
+  and Sara got 0 runs against v8 at all; their last verified stability
+  result is v6's genuine 5/5 (section 6), plus the standing structural
+  argument that neither screen has numeric or habit content available to
+  vary in the first place. `eval_narration.py` now correctly reports a
+  missing stability run as `[skip]`, not `[ok]` (it used to conflate the
+  two). Number tracing, advice filter, state fidelity and redundant
+  framing are all confirmed passing on v8 for all four personas
+  regardless. Re-run `python narrate.py --stability 5 --delay 20` once
+  the daily quota resets for a real v8 stability result across the board.
