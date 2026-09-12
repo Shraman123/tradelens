@@ -1,5 +1,5 @@
 import type { Habit, NotReported, PersonaData, Summary } from "../types"
-import { habitLabel } from "../data/habitLabels"
+import { habitLabel, humanizeReason } from "../data/habitLabels"
 import { pct, rupees, rupeesPlain, formatWindow } from "../lib/format"
 
 function Stat({ label, value }: { label: string; value: string }) {
@@ -78,8 +78,12 @@ function LightItem({
   )
 }
 
-function NotReportedList({ items }: { items: NotReported[] }) {
+function NotReportedList({ items, habits }: { items: NotReported[]; habits: Habit[] }) {
   if (!items.length) return null
+  // "explained by X (confounded)" reasons reference another detector id —
+  // resolve it to that habit's real, currently-displayed label rather than
+  // this list's own (differently-sourced) label, so the two never disagree.
+  const labelFor = (id: string) => habits.find((h) => h.id === id)?.label ?? habitLabel(id)
   return (
     <details className="group rounded-2xl border border-neutral-800 bg-neutral-900/40 p-4 open:border-neutral-700">
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-medium text-neutral-300 [&::-webkit-details-marker]:hidden">
@@ -95,7 +99,7 @@ function NotReportedList({ items }: { items: NotReported[] }) {
         {items.map((item) => (
           <li key={item.id} className="text-sm text-neutral-400">
             <span className="text-neutral-300">{habitLabel(item.id)}</span>
-            {item.reason && <span> — {item.reason}</span>}
+            {item.reason && <span> — {humanizeReason(item.reason, labelFor)}</span>}
           </li>
         ))}
       </ul>
@@ -161,7 +165,7 @@ export function ReviewScreen({ persona, onOpenHabit, onCommit }: Props) {
         </div>
       )}
 
-      <NotReportedList items={analysis.not_reported} />
+      <NotReportedList items={analysis.not_reported} habits={analysis.habits} />
 
       <p className="border-t border-neutral-800 pt-4 text-sm text-neutral-400">{narration.closing}</p>
 

@@ -1,8 +1,8 @@
 {
-  "headline": "No repeatable pattern was identified this month.",
+  "headline": "No repeated pattern met the cost or frequency thresholds in this window.",
   "habits": {},
   "watching": {},
   "also_noticed": {},
-  "closing": "Keep trading as usual and check back next review.",
+  "closing": "Across the 101 trades in this window, no single behaviour repeated enough or incurred enough cost to be confirmed, so the lack of a finding does not mean the period was successful. Check back at the next review to see if any new patterns emerge.",
   "persona": "vikram_control"
 }

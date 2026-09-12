@@ -59,6 +59,43 @@ RULE_TEMPLATES = {
     "holds_losers_longer": "Write your exit-on-loss level before you enter.",
 }
 
+
+def _round_100(v: float) -> int:
+    return int(round(v / 100.0)) * 100
+
+
+# size_up_after_loss's rule ("your usual size") refers to a quantity the
+# evidence already names exactly: median_entry_size_otherwise IS "your usual
+# size". Naming it concretely (rounded to the nearest ₹100 — this is a rule
+# of thumb, not a claim of precision) makes the rule actionable instead of
+# abstract. Checked every other detector's evidence for the same fit: none
+# of the other six rules refer to a quantity their own evidence contains
+# (the underlying thresholds — 5-minute reentry window, 2:30pm cutoff,
+# trade #7 — are detection parameters in detectors.py, not evidence fields,
+# so naming them here would mean inventing a number not in the analysis
+# JSON) — see PROMPTS_LOG.md for the per-detector check. They keep the
+# static template above.
+def _rule_size_up_after_loss(evidence: dict) -> str:
+    usual = evidence.get("median_entry_size_otherwise")
+    amount = f"about {_rupees(_round_100(usual))}" if usual is not None else "your usual size"
+    return (
+        f"After a loss, your next entry stays at your usual size — {amount}. "
+        f"If you want to size up, it has to be a separate decision made before "
+        f"the session, not after a loss."
+    )
+
+
+RULE_BUILDERS = {
+    "size_up_after_loss": _rule_size_up_after_loss,
+}
+
+
+def fixed_rule_for(h: dict) -> str:
+    builder = RULE_BUILDERS.get(h["id"])
+    if builder:
+        return builder(h.get("evidence", {}))
+    return RULE_TEMPLATES.get(h["id"], "")
+
 # Fields safe to send to the narration LLM. Deliberately excludes anything
 # symbol-bearing (example_trades has "NIFTY ... CE/PE" strings, which would
 # hand the model text it could echo straight past the no-advice rule) and
@@ -158,8 +195,8 @@ def trimmed_input(analysis: dict) -> dict:
     def strip_habit(h):
         d = {k: h[k] for k in HABIT_FIELDS if k in h}
         d["cost"] = _rupees(h["cost"]) if h.get("cost") is not None else None
+        d["fixed_rule"] = fixed_rule_for(h)  # raw evidence — before formatting, below
         d["evidence"] = format_evidence(h.get("evidence", {}))
-        d["fixed_rule"] = RULE_TEMPLATES.get(h["id"], "")
         return d
 
     return dict(

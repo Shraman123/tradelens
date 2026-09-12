@@ -81,12 +81,15 @@ Measured on held-out seeds, 60-day window:
 Zero orphan numbers, zero advice-word hits, zero habit-language misuse,
 identical output across reruns — across all four personas.
 
-**Met.** Number tracing / advice filter / state fidelity: 4/4 personas, every
-generation. Stability: 4/4 personas confirmed identical where fully rerun
-(arjun, neha); Vikram and Sara confirmed on partial reruns plus the
-structural argument above (see "Narration layer evals") rather than a full
-literal 5/5 for both, because of a free-tier daily quota, not a quality
-issue found in the output itself.
+**Met** on number tracing / advice filter / state fidelity: 4/4 personas,
+every generation, confirmed again after the v6 prompt update (see
+`PROMPTS_LOG.md` section 6 — window wording, the "nothing found" closing,
+and the concrete `size_up_after_loss` rule). **Not re-verified** on
+stability since v6: the v5 stability run files this section used to cite
+were deleted rather than left in place once the prompt changed underneath
+them (comparing v5's own reruns to each other says nothing about v6's
+consistency). Re-run `python narrate.py --stability 5 --delay 20` then
+`python eval_narration.py` before relying on stability again.
 
 ## Narration layer evals
 

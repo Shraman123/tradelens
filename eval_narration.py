@@ -16,7 +16,10 @@ demo/<persona>_narration.json:
                        or `counterfactual`), allowing for the ordinary
                        reformattings a human writer would use (comma
                        grouping, a rate expressed as a rounded percent,
-                       a ratio written as "1.91x").
+                       a ratio written as "1.91x"). headline/closing stay
+                       number-free with one exception (v6): a "nothing
+                       found" closing (enough data, no habits) may state
+                       the review-month trade count, and only that number.
 2. Advice filter    - no instrument / strike / direction / prediction words
                        anywhere in the narration text.
 3. State fidelity   - insufficient_data / no-habits personas contain no habit
@@ -47,9 +50,14 @@ NUMBER_RE = re.compile(r"-?\d[\d,]*\.?\d*")
 def all_numbers(obj) -> set:
     """Every number that legitimately appears anywhere in the analysis JSON,
     whether as a value or embedded in a string (dates, `message`, `reason`,
-    `counterfactual`, ...), plus the rounded-percent form of any 0-1 rate and
-    the 1-decimal form of any ratio-like float. Superset by design: the goal
-    is to catch a clearly invented number, not to police formatting."""
+    `counterfactual`, ...), plus the rounded-percent form of any 0-1 rate,
+    the 1-decimal form of any ratio-like float, and the nearest-hundred form
+    of any larger figure (v6: narrate.py's RULE_BUILDERS rounds a rupee
+    evidence value to the nearest ₹100 for a "your usual size is about ₹X"
+    rule of thumb — e.g. 6578 -> 6600 — the same kind of ordinary
+    reformatting already tolerated for a rate-as-percent). Superset by
+    design: the goal is to catch a clearly invented number, not to police
+    formatting."""
     out = set()
 
     def walk(o):
@@ -70,6 +78,8 @@ def all_numbers(obj) -> set:
                 if 0 <= val <= 1:
                     out.add(round(val * 100))
                     out.add(round(val * 100, 1))
+                if abs(val) >= 100:
+                    out.add(round(val / 100) * 100)
         elif isinstance(o, str):
             for m in NUMBER_RE.findall(o):
                 try:
@@ -115,9 +125,22 @@ def check_number_tracing(persona, analysis, narration):
     # v5: headline/closing are tone, never data (stability requirement - see
     # narration_system_v4_FAILED.notes.md), and watching/also_noticed are
     # never given a specific figure at all (see rule 3).
+    #
+    # v6: one narrow, deliberate exception. The "nothing found" closing
+    # (enough data, no habits) is allowed to state the review-month trade
+    # count -- and only that number -- to explain what "nothing found"
+    # means at the trader's own scale (see prompts/narration_system.md's
+    # rule 4 and its closing guidance). Every other case, and every other
+    # field, stays number-free exactly as before.
+    nothing_found = not analysis["insufficient_data"] and not analysis.get("habits")
+    trade_count = analysis.get("summary", {}).get("review_month", {}).get("closed_trades")
+    closing_allowed = {round(float(trade_count), 4)} if (nothing_found and trade_count is not None) else set()
+
     for field in ("headline", "closing"):
-        if narration_numbers(narration.get(field, "")):
-            problems.append(f"{field} contains a number (must be zero): {narration[field]!r}")
+        nums = narration_numbers(narration.get(field, ""))
+        stray = nums - closing_allowed if field == "closing" else nums
+        if stray:
+            problems.append(f"{field} contains a number that shouldn't be there ({stray}): {narration[field]!r}")
     for section in ("watching", "also_noticed"):
         for hid, w in narration.get(section, {}).items():
             if narration_numbers(w.get("note", "")):

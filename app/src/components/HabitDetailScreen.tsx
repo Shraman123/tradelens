@@ -103,8 +103,9 @@ export function HabitDetailScreen({ persona, habitId, onBack }: Props) {
 
       {habit.cost != null && (
         <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
-          <p className="tabular-nums text-2xl font-semibold tracking-tight text-amber-400">{rupees(habit.cost)}</p>
-          {habit.counterfactual && <p className="mt-1 text-sm text-neutral-400">{habit.counterfactual}</p>}
+          <p className="text-[11px] uppercase tracking-wide text-amber-400/80">What this cost you</p>
+          <p className="tabular-nums mt-1 text-2xl font-semibold tracking-tight text-amber-400">{rupees(habit.cost)}</p>
+          {habit.counterfactual && <p className="mt-2 text-xs text-neutral-500">{habit.counterfactual}</p>}
         </div>
       )}
 
