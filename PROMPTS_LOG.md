@@ -446,3 +446,44 @@ vikram_control: PASS
 
 ALL PASS
 ```
+
+**Fresh v7 stability check, run separately on request**
+(`python narrate.py --stability 5 --delay 20`, 20 Groq calls): 20/20
+succeeded first pass — no rate limits, no self-check retries, cleaner than
+either prior stability run (v6's had one rate-limit failure and one
+self-check retry; earlier v5-era runs never got all four to 5/5 at all).
+`eval_narration.py`:
+
+```
+arjun_revenge_sizer: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+  stability        [ok] 5 runs, identical ids and numbers
+
+neha_expiry_day: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+  stability        [ok] 5 runs, identical ids and numbers
+
+sara_thin_data: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+  stability        [ok] 5 runs, identical ids and numbers
+
+vikram_control: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+  stability        [ok] 5 runs, identical ids and numbers
+
+ALL PASS
+```
+
+v7 is now the second consecutive prompt version to reach a genuine 5/5 for
+all four personas (v6 did too, section 6) — the varied ruled-out phrasing
+(tiered by p-value, not free-form) and the three-sentence closing
+structure are both deterministic-enough templates that they didn't
+introduce new instability.

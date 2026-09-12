@@ -1,0 +1,8 @@
+{
+  "headline": "No repeatable behavior met the cost or frequency thresholds",
+  "closing": "In this window, 101 trades were reviewed, and none repeated often enough or cost enough to be confirmed. That does not mean the window was successful; the loss shown elsewhere is not linked to a single recurring behavior. Please check back in the next review for new insights.",
+  "persona": "vikram_control",
+  "habits": {},
+  "watching": {},
+  "also_noticed": {}
+}
