@@ -487,3 +487,98 @@ all four personas (v6 did too, section 6) — the varied ruled-out phrasing
 (tiered by p-value, not free-form) and the three-sentence closing
 structure are both deterministic-enough templates that they didn't
 introduce new instability.
+
+## 8. Live-app read-through catches a redundant-phrase bug (2026-09-12)
+
+```
+check the live app
+```
+
+(User pasted the actual rendered page text for all four personas from the
+live URL.) Reading the real output surfaced a bug none of the automated
+checks caught: Arjun's `why_it_matters` read "Those after‑loss trades
+produced a loss of a loss of ₹1,95,375" — a duplicated phrase. Cause:
+`after_loss_net` is pre-formatted by `narrate.py`'s `_rupees_signed` into
+a complete phrase, `"a loss of ₹1,95,375"`, not a bare number — the model
+wrote its own "produced a loss of" immediately in front of it anyway,
+producing the doubled phrase. `check_number_tracing` couldn't have caught
+this: the digit (195375) is correct and present either way; the defect is
+purely grammatical, not numeric.
+
+Two other things checked and confirmed correct, not bugs, while reading
+the pasted text closely:
+- Sara's screen shows "Trades: 9" in the stat row but "18 closed trades"
+  in the insufficient-data message — these are two different, intentional
+  counts (`summary.review_month` = August only, 9 trades; the full
+  59-day evidence window = 18 trades), per the original brief's own
+  design ("Review month... in three numbers... Evidence window stated
+  explicitly"). Confirmed against `sara_thin_data_analysis.json` before
+  concluding this, not assumed.
+- The pasted text shows "What we checked and ruled out (N)" with no
+  bullets under it for any persona — expected, not a regression: `<details>`
+  content isn't included in a plain select-all/copy of the rendered page
+  unless it's expanded first, so this says nothing about whether fix 1
+  (section 5) is still rendering. Already verified separately via bundle
+  inspection.
+
+**Fix, matching this project's own established pattern** (a bug that
+slips past the eval suite gets a permanent new check, not just a one-off
+prompt patch — see the ₹9,449 digit-insertion incident, section 4):
+1. `prompts/narration_system.md` v7 -> v8: rule 1 now explicitly names this
+   failure mode ("Do not write 'produced a loss of a loss of ₹1,95,375' —
+   a real failure this rule exists to prevent") and tells the model either
+   to drop the pre-formatted value in as its own clause or introduce it
+   with neutral wording ("at", "totalling", "amounting to") that doesn't
+   repeat "loss"/"gain".
+2. New `check_redundant_framing` in `eval_narration.py` — a regex for
+   "a loss/gain of" immediately followed by another "a loss/gain of" —
+   added as a 5th check to `eval_narration.py`'s per-persona report AND to
+   `narrate.py`'s `SELF_CHECKS` (so a future occurrence is caught and
+   retried automatically at generation time, not just flagged after the
+   fact). Verified against the actual bug before regenerating: correctly
+   fails on Arjun's pre-fix text (`redundant framing found: ['a loss of a
+   loss of']`) and passes clean on the other three (no false positives).
+
+Regenerated all four personas against v8 (arjun and neha succeeded first
+call; vikram and sara hit the Groq TPM rate limit and were retried
+individually). Arjun's fixed text, first attempt, 0 self-check retries —
+the prompt guardrail worked without needing the runtime retry:
+
+> "The cost of this behaviour is ₹1,05,732. It occurred in 96 trades, with
+> a median entry size after a loss of ₹12,562 versus ₹6,578 otherwise,
+> giving a size ratio of 1.91x. The after‑loss win rate was 28% compared
+> with 39% otherwise, and those trades were a loss of ₹1,95,375."
+
+`eval_narration.py` (now 4 non-stability checks per persona):
+
+```
+arjun_revenge_sizer: PASS
+  number_tracing    [ok] ok
+  advice_filter     [ok] ok
+  state_fidelity    [ok] ok
+  redundant_framing [ok] ok
+
+neha_expiry_day: PASS
+  number_tracing    [ok] ok
+  advice_filter     [ok] ok
+  state_fidelity    [ok] ok
+  redundant_framing [ok] ok
+
+sara_thin_data: PASS
+  number_tracing    [ok] ok
+  advice_filter     [ok] ok
+  state_fidelity    [ok] ok
+  redundant_framing [ok] ok
+
+vikram_control: PASS
+  number_tracing    [ok] ok
+  advice_filter     [ok] ok
+  state_fidelity    [ok] ok
+  redundant_framing [ok] ok
+
+ALL PASS
+```
+
+Stale v7 stability run files deleted (same reasoning as sections 6-7 —
+they validate v7's wording, not v8's). Not re-run in this pass; ask for a
+fresh one the same way as before if wanted.

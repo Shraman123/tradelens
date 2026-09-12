@@ -7,7 +7,7 @@ bar. Run after `python narrate.py` (and `python narrate.py --stability 5`).
 
     python eval_narration.py
 
-Four checks, per persona, against demo/<persona>_analysis.json and
+Five checks, per persona, against demo/<persona>_analysis.json and
 demo/<persona>_narration.json:
 
 1. Number tracing   - every number in the narration text must trace to a
@@ -24,7 +24,16 @@ demo/<persona>_narration.json:
                        anywhere in the narration text.
 3. State fidelity   - insufficient_data / no-habits personas contain no habit
                        language; "watching" items are never called a habit.
-4. Stability        - across N reruns (results/narration_stability/), the set
+4. Redundant framing - v8: some evidence values are handed to the model as a
+                       complete phrase already ("a loss of ₹X"), and it has
+                       been observed writing its own "a loss of"/"a gain of"
+                       immediately in front of one anyway ("produced a loss
+                       of a loss of ₹1,95,375" — a real generation, not a
+                       hypothetical). Number tracing alone can't catch this:
+                       the digit is still correct, only the English is
+                       broken. Fails on "a loss/gain of" immediately
+                       followed by another "a loss/gain of".
+5. Stability        - across N reruns (results/narration_stability/), the set
                        of habit/watching ids named and every number used is
                        identical.
 """
@@ -43,6 +52,12 @@ ADVICE_WORDS = [
     r"\bexpect\b", r"will rise", r"will fall", r"\btarget\b",
 ]
 ADVICE_RE = re.compile("|".join(ADVICE_WORDS), re.IGNORECASE)
+
+# v8: "a loss of ₹X" / "a gain of ₹X" are already complete phrases (see
+# narrate.py's _rupees_signed/_pct_signed) - this catches the model
+# prepending its own framing right before one, e.g. "produced a loss of a
+# loss of ₹1,95,375". See prompts/narration_system.md rule 1's note.
+REDUNDANT_FRAMING_RE = re.compile(r"\ba (?:loss|gain) of\s+a (?:loss|gain) of\b", re.IGNORECASE)
 
 NUMBER_RE = re.compile(r"-?\d[\d,]*\.?\d*")
 
@@ -155,6 +170,12 @@ def check_advice_filter(persona, analysis, narration):
     return (len(hits) == 0, f"advice words found: {hits}" if hits else "ok")
 
 
+def check_redundant_framing(persona, analysis, narration):
+    text = narration_text(narration)
+    hits = REDUNDANT_FRAMING_RE.findall(text)
+    return (len(hits) == 0, f"redundant framing found: {hits}" if hits else "ok")
+
+
 def check_state_fidelity(persona, analysis, narration):
     text_all = (narration.get("headline", "") + " " + narration.get("closing", "")).lower()
     if analysis["insufficient_data"] or not analysis.get("habits"):
@@ -204,6 +225,7 @@ def main():
             "number_tracing": check_number_tracing(persona, analysis, narration),
             "advice_filter": check_advice_filter(persona, analysis, narration),
             "state_fidelity": check_state_fidelity(persona, analysis, narration),
+            "redundant_framing": check_redundant_framing(persona, analysis, narration),
         }
         stable_ok, stable_msg = check_stability(persona)
         results["stability"] = (True if stable_ok is None else stable_ok, stable_msg)

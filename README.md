@@ -107,9 +107,13 @@ to, so the entry point simply isn't rendered, not disabled.
   or symlink would remove that step.
 - Deployed to Vercel: https://app-azure-zeta-42.vercel.app (connected to
   the `Shraman123/tradelens` GitHub repo, so pushes to `main` auto-deploy).
-- ~~Narration stability~~ — closed on the current prompt (v7 — see
-  `PROMPTS_LOG.md` section 7 for the wording, section 7's tail for the
-  run). All four personas: a genuine 5/5, 20/20 Groq calls succeeded with
-  no rate limits and no self-check retries, cleaner than either prior
-  stability run. This is the second prompt version in a row (after v6) to
-  reach 5/5 for all four.
+- Narration stability hasn't been re-verified since the prompt moved to v8
+  (see `PROMPTS_LOG.md` section 8 — a redundant-phrase bug found by
+  reading the live app, "produced a loss of a loss of ₹X", fixed with a
+  prompt guardrail plus a new automated `redundant_framing` check in
+  `eval_narration.py`). v6 and v7 each independently reached a genuine 5/5
+  for all four personas (sections 6-7), but those runs don't speak to v8's
+  wording. Number tracing, advice filter, state fidelity and redundant
+  framing are all confirmed passing on v8 for all four personas; run
+  `python narrate.py --stability 5 --delay 20` then `python eval_narration.py`
+  to re-check stability before relying on it.

@@ -37,7 +37,9 @@ import time
 import urllib.request
 import urllib.error
 
-from eval_narration import check_number_tracing, check_advice_filter, check_state_fidelity
+from eval_narration import (
+    check_number_tracing, check_advice_filter, check_state_fidelity, check_redundant_framing,
+)
 
 DEMO_DIR = "demo"
 STABILITY_DIR = os.path.join("results", "narration_stability")
@@ -307,13 +309,14 @@ def call_groq(system_prompt: str, user_json: dict, retries=3) -> dict:
 PROVIDERS = {"anthropic": call_anthropic, "groq": call_groq}
 
 
-SELF_CHECKS = [check_number_tracing, check_advice_filter, check_state_fidelity]
+SELF_CHECKS = [check_number_tracing, check_advice_filter, check_state_fidelity, check_redundant_framing]
 
 
 def narrate_persona(name: str, system_prompt: str, provider: str, self_check_retries=2) -> dict:
     """Generate, then validate against the same checks eval_narration.py runs
-    (number tracing, advice filter, state fidelity) before accepting the
-    output — regenerating on failure rather than shipping bad prose and
+    (number tracing, advice filter, state fidelity, redundant framing) before
+    accepting the output — regenerating on failure rather than shipping bad
+    prose and
     hoping a separate eval run catches it later. Added after a stability run
     surfaced a real digit-insertion error (evidence said "₹449", one run's
     prose said "₹9449") that number_tracing would have caught immediately

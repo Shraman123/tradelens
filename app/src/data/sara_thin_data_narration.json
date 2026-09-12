@@ -1,8 +1,8 @@
 {
-  "headline": "Not enough data to identify any recurring behaviour.",
+  "headline": "Not enough trades to identify a repeatable behaviour",
+  "closing": "We don't have enough trading history yet to spot a consistent behaviour. Keep building your trade record, and we'll revisit this in the next review.",
+  "persona": "sara_thin_data",
   "habits": {},
   "watching": {},
-  "also_noticed": {},
-  "closing": "Trade a bit more before the next review can look for a pattern.",
-  "persona": "sara_thin_data"
+  "also_noticed": {}
 }

@@ -1,8 +1,8 @@
 {
-  "headline": "No repeatable behavior met the cost or frequency thresholds in this window.",
+  "headline": "No repeated, cost\u2011significant pattern emerged in this window.",
   "habits": {},
   "watching": {},
   "also_noticed": {},
-  "closing": "Across the 101 trades in this window, no single behavior repeated often enough or incurred enough cost to be confirmed. That does not mean the window was successful; the loss shown elsewhere is not linked to a recurring, provable behavior. We'll review the data again in the next cycle.",
+  "closing": "Across the 101 trades this window, no single behaviour repeated often enough or cost enough to be proven from the order history. That does not mean the window was successful; the loss shown elsewhere is not linked to any recurring, provable behaviour. Check back at the next review for new insights.",
   "persona": "vikram_control"
 }

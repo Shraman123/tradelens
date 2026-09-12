@@ -81,20 +81,23 @@ Measured on held-out seeds, 60-day window:
 Zero orphan numbers, zero advice-word hits, zero habit-language misuse,
 identical output across reruns — across all four personas.
 
-**Met, fully**, on the current prompt (v7 — see `PROMPTS_LOG.md` sections
-6-7 for the full version history: window wording and the concrete
-`size_up_after_loss` rule in v6; varied ruled-out phrasing and a "nothing
-found" closing that doesn't chain two unrelated ideas with "so" in v7).
-Number tracing / advice filter / state fidelity: 4/4 personas, every
-generation. Stability: **4/4 personas, a genuine 5/5** — 20/20 Groq calls
-succeeded first pass, no rate limits, no self-check retries (cleaner than
-either the v6 run or any v5-era run). Two prompt versions in a row (v6,
-then v7) have now independently reached a complete 5/5 for all four.
+**Met** on number tracing / advice filter / state fidelity / redundant
+framing: 4/4 personas, every generation, on the current prompt (v8 — see
+`PROMPTS_LOG.md` sections 6-8 for the full version history: window
+wording and the concrete `size_up_after_loss` rule in v6; varied
+ruled-out phrasing and a "nothing found" closing that doesn't chain two
+unrelated ideas with "so" in v7; a redundant-phrase guardrail, found by
+reading the live app rather than by any automated check, in v8).
+**Stability not currently re-verified**: v6 and v7 each independently
+reached a genuine 5/5 for all four personas at the time (sections 6-7),
+but those runs were deleted rather than left in place once v8 changed the
+wording underneath them. Re-run `python narrate.py --stability 5 --delay 20`
+then `python eval_narration.py` before relying on stability again.
 
 ## Narration layer evals
 
 Provider/model: Groq, `openai/gpt-oss-120b`, temperature 0.2 (see README for
-why Groq — free tier, no card — and how to swap providers). Four automated
+why Groq — free tier, no card — and how to swap providers). Five automated
 checks in `eval_narration.py`, run against all four personas:
 
 | Check | What it verifies | Result |
@@ -102,18 +105,19 @@ checks in `eval_narration.py`, run against all four personas:
 | Number tracing | every ₹/%/ratio/count in the narration traces to a value in the analysis JSON | **PASS**, all 4 |
 | Advice filter | no instrument/strike/direction/prediction words anywhere | **PASS**, all 4 |
 | State fidelity | no habit-language for Vikram/Sara; "watching" never phrased as confirmed | **PASS**, all 4 |
-| Stability (5 reruns) | identical habit/watching ids and identical numbers across 5 regenerations | **PASS**, all 4 personas, a genuine 5/5 on v7 — see `PROMPTS_LOG.md` section 7 |
+| Redundant framing (v8) | no "a loss/gain of" immediately followed by another "a loss/gain of" (a real generation duplicated one — see `PROMPTS_LOG.md` section 8) | **PASS**, all 4 |
+| Stability (5 reruns) | identical habit/watching ids and identical numbers across 5 regenerations | **Not currently verified for v8** — v6 and v7 each reached a genuine 5/5 for all four personas at the time (`PROMPTS_LOG.md` sections 6-7), but those runs don't speak to v8's wording |
 
 Every single-shot generation, on every prompt version from v2 onward, has
 independently passed number-tracing and state-fidelity regardless of
 whether a full 5x stability batch was current at the time — the thing
 stability is checking for (the model violating a numeric or empty-habits
 rule) is already caught per-run by the checks above, and by
-`narrate_persona`'s own self-check retry at generation time. A full 5/5
-stability batch is now current for v7 as well (section 7), but if the
-prompt changes again, remember the run in `results/narration_stability/`
-only speaks to the prompt it was generated against — re-run it after any
-further prompt edit rather than trust a stale pass.
+`narrate_persona`'s own self-check retry at generation time. Remember that
+a stability run in `results/narration_stability/` only speaks to the
+prompt it was generated against — re-run it after any prompt edit rather
+than trust a stale pass; see `PROMPTS_LOG.md` for whether one exists for
+v8 by the time you're reading this.
 
 ## Not yet tested
 
