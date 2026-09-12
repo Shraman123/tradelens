@@ -34,10 +34,10 @@ function OrderLegs({ trade, orders }: { trade: ExampleTrade; orders: OrderRow[] 
               <tbody>
                 {legs.map((l) => (
                   <tr key={l.order_id} className="border-b border-neutral-900 last:border-0">
-                    <td className="px-2 py-1.5 text-neutral-400">{l.timestamp.slice(11, 16)}</td>
+                    <td className="tabular-nums px-2 py-1.5 text-neutral-400">{l.timestamp.slice(11, 16)}</td>
                     <td className="px-2 py-1.5 text-neutral-300">{l.side}</td>
-                    <td className="px-2 py-1.5 text-right text-neutral-300">{l.qty}</td>
-                    <td className="px-2 py-1.5 text-right text-neutral-300">₹{l.price}</td>
+                    <td className="tabular-nums px-2 py-1.5 text-right text-neutral-300">{l.qty}</td>
+                    <td className="tabular-nums px-2 py-1.5 text-right text-neutral-300">₹{l.price}</td>
                   </tr>
                 ))}
               </tbody>
@@ -51,7 +51,7 @@ function OrderLegs({ trade, orders }: { trade: ExampleTrade; orders: OrderRow[] 
 
 function ExampleTradeRow({ trade, orders }: { trade: ExampleTrade; orders: OrderRow[] }) {
   return (
-    <div className="rounded-lg border border-neutral-800 bg-neutral-900/60 p-3">
+    <div className="rounded-xl border border-neutral-800 bg-neutral-900/60 p-3 transition-colors hover:border-neutral-700">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-neutral-200">{trade.symbol}</p>
@@ -59,7 +59,7 @@ function ExampleTradeRow({ trade, orders }: { trade: ExampleTrade; orders: Order
             {formatDate(trade.date)} · {trade.entry}
           </p>
         </div>
-        <p className="shrink-0 text-sm font-medium text-neutral-300">{rupeesPlain(trade.net_pnl)}</p>
+        <p className="tabular-nums shrink-0 text-sm font-medium text-neutral-300">{rupeesPlain(trade.net_pnl)}</p>
       </div>
       <OrderLegs trade={trade} orders={orders} />
     </div>
@@ -87,34 +87,34 @@ export function HabitDetailScreen({ persona, habitId, onBack }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-6">
-      <button type="button" onClick={onBack} className="text-sm text-neutral-400 hover:text-neutral-200">
+      <button type="button" onClick={onBack} className="text-sm text-neutral-400 transition-colors hover:text-neutral-200">
         ← Back to review
       </button>
 
       <div>
         <span className="text-[11px] font-medium uppercase tracking-wide text-neutral-500">Habit #{habit.rank}</span>
-        <h1 className="mt-0.5 text-xl font-semibold text-neutral-50">{habit.label}</h1>
+        <h1 className="mt-0.5 text-xl font-semibold tracking-tight text-neutral-50">{habit.label}</h1>
         {habit.confidence && (
-          <span className="mt-2 inline-block rounded-full border border-neutral-700 px-2 py-0.5 text-[11px] text-neutral-400">
+          <span className="mt-2 inline-block rounded-full border border-neutral-700 bg-neutral-900 px-2 py-0.5 text-[11px] text-neutral-400">
             {habit.confidence} confidence
           </span>
         )}
       </div>
 
       {habit.cost != null && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
-          <p className="text-2xl font-semibold text-amber-400">{rupees(habit.cost)}</p>
+        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4">
+          <p className="tabular-nums text-2xl font-semibold tracking-tight text-amber-400">{rupees(habit.cost)}</p>
           {habit.counterfactual && <p className="mt-1 text-sm text-neutral-400">{habit.counterfactual}</p>}
         </div>
       )}
 
-      <div className="rounded-xl border border-neutral-800 bg-neutral-900 p-4">
+      <div className="rounded-2xl border border-neutral-800 bg-neutral-900 p-4">
         <p className="mb-3 text-[11px] uppercase tracking-wide text-neutral-500">Evidence</p>
         <dl className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
           {evidenceRows(habit.evidence).map((row) => (
             <div key={row.label} className="flex items-center justify-between gap-3 border-b border-neutral-800/60 py-1.5 sm:border-0 sm:py-0">
               <dt className="text-sm text-neutral-400">{row.label}</dt>
-              <dd className="text-sm font-medium text-neutral-100">{row.value}</dd>
+              <dd className="tabular-nums text-sm font-medium text-neutral-100">{row.value}</dd>
             </div>
           ))}
         </dl>

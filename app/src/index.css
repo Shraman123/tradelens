@@ -12,5 +12,61 @@ body {
   margin: 0;
   background: #0b0d10;
   color: #e7e9ec;
-  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Inter", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Money and stats read as a ledger, not prose — figures line up. */
+.tabular-nums, .font-tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* A visible, deliberate focus ring instead of the browser default —
+   every interactive element in the app is a <button>, so this alone
+   covers keyboard navigation across all five screens. */
+:focus-visible {
+  outline: 2px solid rgba(245, 166, 35, 0.65);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Thin, quiet scrollbar for the horizontal persona strip — the default
+   scrollbar reads as unfinished on a screen this considered. */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Screens fade+rise in on entry so navigating between them (persona
+   switch, opening a habit, committing) reads as a considered app, not
+   an instant DOM swap. Respects reduced-motion. */
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-screen-in {
+  animation: screen-in 0.22s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-screen-in {
+    animation: none;
+  }
 }

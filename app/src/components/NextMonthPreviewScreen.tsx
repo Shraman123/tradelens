@@ -27,11 +27,15 @@ export function NextMonthPreviewScreen({ persona, habitId, onBack }: Props) {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-6">
-      <button type="button" onClick={onBack} className="text-sm text-neutral-400 hover:text-neutral-200">
+      <button type="button" onClick={onBack} className="text-sm text-neutral-400 transition-colors hover:text-neutral-200">
         ← Back to review
       </button>
 
-      <div className="rounded-lg border border-dashed border-neutral-700 bg-neutral-900/50 px-3 py-2">
+      <div className="flex items-start gap-2 rounded-2xl border border-dashed border-neutral-700 bg-neutral-900/50 px-3 py-2.5">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="mt-0.5 shrink-0 text-neutral-500">
+          <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3" />
+          <path d="M8 5v3.3M8 11h.01" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+        </svg>
         <p className="text-xs font-medium text-neutral-400">
           Mock preview — illustrates the loop, not a real generated review. No order history for {month} exists yet.
         </p>
@@ -39,7 +43,7 @@ export function NextMonthPreviewScreen({ persona, habitId, onBack }: Props) {
 
       <div>
         <p className="text-xs text-neutral-500">{month} review (preview)</p>
-        <h1 className="mt-1 text-xl font-semibold text-neutral-50">You broke this rule 3 times in 21 trading days.</h1>
+        <h1 className="mt-1 text-xl font-semibold tracking-tight text-neutral-50">You broke this rule 3 times in 21 trading days.</h1>
         <p className="mt-3 text-sm text-neutral-400">The rule you committed to last review:</p>
         <p className="mt-1 text-sm font-medium text-neutral-200">{rule}</p>
       </div>

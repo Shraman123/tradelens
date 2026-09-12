@@ -18,7 +18,7 @@ export function PersonaSwitcher({ personas, selectedId, onSelect }: Props) {
         <p className="mb-2 text-[11px] font-medium uppercase tracking-wide text-neutral-500">
           Demo persona
         </p>
-        <div className="-mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1">
+        <div className="scrollbar-thin -mx-1 flex snap-x gap-2 overflow-x-auto px-1 pb-1.5">
           {personas.map((p) => {
             const active = p.id === selectedId
             return (
@@ -27,10 +27,10 @@ export function PersonaSwitcher({ personas, selectedId, onSelect }: Props) {
                 type="button"
                 onClick={() => onSelect(p.id)}
                 aria-pressed={active}
-                className={`w-56 shrink-0 snap-start rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                className={`w-56 shrink-0 snap-start rounded-xl border px-3 py-2.5 text-left transition-all duration-150 ${
                   active
-                    ? "border-amber-500/60 bg-amber-500/10"
-                    : "border-neutral-800 bg-neutral-900 hover:border-neutral-700"
+                    ? "border-amber-500/60 bg-amber-500/10 shadow-[0_0_0_1px_rgba(245,166,35,0.15)]"
+                    : "border-neutral-800 bg-neutral-900 hover:-translate-y-0.5 hover:border-neutral-700 hover:bg-neutral-900/80 hover:shadow-lg hover:shadow-black/20"
                 }`}
               >
                 <div className="text-sm font-medium text-neutral-100">{p.name}</div>
