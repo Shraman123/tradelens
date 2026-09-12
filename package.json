@@ -1,0 +1,12 @@
+{
+  "name": "tradelens-submission",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Repo-root tooling, separate from app/ (the Vite frontend). Currently just the ONE_PAGER.md -> TradeLens_Submission.pdf build.",
+  "scripts": {
+    "build:pdf": "node scripts/build_pdf.js"
+  },
+  "devDependencies": {
+    "puppeteer": "^23.0.0"
+  }
+}

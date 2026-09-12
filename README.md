@@ -77,6 +77,19 @@ cd app && npm test                              # TS/Python cross-check: the in-
                                                  # every example_trade's entry_size_rs and net_pnl independently
 ```
 
+## Rebuild the submission one-pager
+
+`ONE_PAGER.md` is the source; `TradeLens_Submission.pdf` is generated from
+it, not hand-edited. Requires [pandoc](https://pandoc.org/) (used to parse
+the markdown) — `npm install` at the repo root also pulls in Puppeteer
+(headless Chromium does the actual PDF rendering, since this environment
+couldn't complete a LaTeX or wkhtmltopdf install):
+
+```
+npm install               # once, at the repo root (not app/) — installs Puppeteer
+npm run build:pdf         # ONE_PAGER.md -> TradeLens_Submission.pdf
+```
+
 ## Assumptions baked into the synthetic data (not Nubra's actual numbers)
 
 From `generate_personas.py` / `habit_library.md`:

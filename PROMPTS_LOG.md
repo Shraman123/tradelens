@@ -636,3 +636,58 @@ overstates what actually ran tonight.
 
 No further Groq calls made after this, per the instruction to stop for
 the night.
+
+## 10. ONE_PAGER.md and the submission PDF (2026-09-12)
+
+```
+Add a new section to ONE_PAGER.md called "What I'd validate first", placed after "What testing changed" and before "Scope". Keep the whole one-pager under 700 words — cut from other sections if needed.
+
+The section must state plainly that this product rests on assumptions I have not tested with real traders, then list the three riskiest ones, each with how I'd test it and what result would kill or change the product:
+
+1. Desirability — that a trader who loses money wants a diagnosis rather than avoiding the review entirely. Test: does the review get opened after a losing month, or only after a winning one?
+2. Behaviour change — that naming one habit and getting a commitment actually reduces that habit next month. Test: habit recurrence rate for committed vs non-committed users.
+3. Trust — that a trader accepts a behavioural verdict from his own broker, given the broker earns on his volume.
+
+Then add a short "How I'd measure success" paragraph: the metric is habit recurrence next month, not opens or session time; the counter-metric is churn, because if diagnosed traders leave rather than improve the thesis is wrong; and note the noise problem, that a trader can fix a real habit and still have a worse month.
+
+Write it in the same plain voice as the rest of the document. Do not invent user quotes, interviews, or research findings. Commit and push, then rebuild TradeLens_Submission.pdf.
+```
+
+`ONE_PAGER.md` and `TradeLens_Submission.pdf` didn't exist anywhere in
+this repo, its git history, or elsewhere on the filesystem checked before
+this prompt — asked rather than guessed at content or a build pipeline
+that might exist somewhere out of view. The user pasted the exact
+`ONE_PAGER.md` content to save verbatim (744 words) and asked for a new
+pandoc-based PDF pipeline; that baseline was committed first, separately,
+per the user's own instruction, before this section was added.
+
+**The 700-word budget was tight from the start**: the baseline alone was
+744 words, over budget before adding anything. The two new sections,
+written as economically as possible while still covering every required
+element (the assumptions statement, three risks each with a test and a
+kill/change signal, and the metric/counter-metric/noise paragraph),
+needed real cuts elsewhere — not light copy-editing but removing whole
+clauses and one full sentence (the "duplicated phrase" anecdote in "What
+testing changed", now that "What I'd validate first" carries a similar
+epistemic-honesty note). Two supporting SEBI statistics (the 92%-of-losses
+and 59%-same-day-expiry figures) were also cut from "The problem" as the
+least load-bearing facts, keeping the core argument (87.7% lose, 90%
+repeat) intact. Final: 699 words by `wc -w` — confirmed directly against
+the assembled file, not estimated from section subtotals (which
+undercounted by not including the "## " heading tokens themselves).
+
+No user quotes, interviews, or research findings were invented — the
+three "Test:" lines are proposed methods for validating the stated
+assumptions, matching the section's own framing ("what I'd validate
+first"), not claimed results.
+
+**PDF pipeline**: pandoc (installed via winget — a LaTeX distribution was
+too heavy, and wkhtmltopdf's installer needed UAC elevation this
+sandboxed shell couldn't grant) converts the markdown to an HTML
+fragment; a new `scripts/build_pdf.js` wraps it in print-styled HTML
+(plain typography, the app's own amber accent, matching the product's
+restrained design voice) and Puppeteer (a plain npm devDependency, no
+elevation needed, ships its own Chromium) prints it to
+`TradeLens_Submission.pdf`. `npm run build:pdf` from the repo root.
+Verified by reading the actual rendered PDF, not just checking the file
+was written: two pages, correct section order, no rendering artifacts.
