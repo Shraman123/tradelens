@@ -1,0 +1,17 @@
+{
+  "headline": "You\u2019re seeing a costly size\u2011up after losing trades.",
+  "habits": {
+    "size_up_after_loss": {
+      "why_it_matters": "The size\u2011up after a loss cost you \u20b91,05,732. It happened in 96 trades, where the median entry size after a loss was \u20b912,562 compared with \u20b96,578 otherwise, giving a size ratio of 1.91x. Those after\u2011loss trades produced a loss of \u20b91,95,375 and a win rate of 28%, versus a 39% win rate on other trades.",
+      "rule": "After a loss, your next entry stays at your usual size \u2014 about \u20b96,600. If you want to size up, it has to be a separate decision made before the session, not after a loss."
+    }
+  },
+  "watching": {
+    "averaging_down": {
+      "note": "Adding to losing positions is something to keep an eye on."
+    }
+  },
+  "closing": "For the next window, try following the rule to keep your entry size consistent after a loss.",
+  "persona": "arjun_revenge_sizer",
+  "also_noticed": {}
+}

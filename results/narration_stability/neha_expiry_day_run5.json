@@ -1,0 +1,13 @@
+{
+  "headline": "A clear cost driver emerged in this window.",
+  "habits": {
+    "expiry_day_trading": {
+      "why_it_matters": "The expiry\u2011day trades accounted for a loss of \u20b91,16,891. In the slice, 90 trades produced a loss of \u20b91,16,891, an average loss of \u20b91,299, a win rate of 29% and a 28% loss on average, while the rest of the trades (124) showed a 5% loss on average, a loss of \u20b9449 on average and a win rate of 37%.",
+      "rule": "Set a hard cap on expiry-day trades before the open."
+    }
+  },
+  "closing": "Consider applying the rule for expiry\u2011day trading next month.",
+  "persona": "neha_expiry_day",
+  "watching": {},
+  "also_noticed": {}
+}

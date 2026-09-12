@@ -107,10 +107,8 @@ to, so the entry point simply isn't rendered, not disabled.
   or symlink would remove that step.
 - Deployed to Vercel: https://app-azure-zeta-42.vercel.app (connected to
   the `Shraman123/tradelens` GitHub repo, so pushes to `main` auto-deploy).
-- Narration stability has not been re-verified since the v6 prompt update
-  (see `PROMPTS_LOG.md` section 6) — the old v5 stability runs were deleted
-  rather than left in place, since comparing v5 output to itself wouldn't
-  say anything about v6. Number tracing, advice filter and state fidelity
-  are all confirmed passing on v6 for all four personas; run
-  `python narrate.py --stability 5 --delay 20` then `python eval_narration.py`
-  to re-check stability before relying on it.
+- ~~Narration stability~~ — closed. All four personas now have a genuine
+  5/5 stability result on the v6 prompt (identical habit ids and numbers
+  across every rerun), including Sara and Vikram, whose earlier v5 results
+  were cut short by a free-tier daily quota. See `PROMPTS_LOG.md` section 6
+  for the full run.

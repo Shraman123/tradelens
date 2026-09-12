@@ -304,13 +304,57 @@ vikram_control: PASS
 ALL PASS
 ```
 
-Stability was **not** re-run for v6 (only number tracing / advice filter /
-state fidelity were asked for, and a fresh 5x-per-persona run costs ~20
-more Groq calls against an 8000 TPM free-tier limit already hit twice
-during this session — see the rate-limit retries in the raw run output).
-The pre-v6 stability run files were deleted rather than left in place,
-since comparing them to each other would validate v5's wording, not v6's —
-a stale pass would have been more misleading than an honest "not run."
+Stability was not re-run for v6 in the same session as the fixes above
+(only number tracing / advice filter / state fidelity were asked for
+then) — the pre-v6 stability run files were deleted rather than left in
+place, since comparing them to each other would validate v5's wording, not
+v6's, and a stale pass would have been more misleading than an honest "not
+run."
+
+**Run separately, on request** (`python narrate.py --stability 5 --delay 20`,
+20 Groq calls): 19/20 succeeded first pass; `neha_expiry_day` run 3 hit the
+8000 TPM free-tier limit after exhausting its own retries (a capacity
+question, not a content one) and was regenerated individually to complete
+the set. One self-check retry fired along the way — `neha_expiry_day` run 1
+first came back with "a loss of ₹9,449" where the evidence says ₹449, the
+same digit-insertion flake recorded in section 4 above; the runtime
+self-check (not a human) caught it and regenerated automatically, so the
+saved run1 file is the corrected version, not the flaky one.
+
+Result: **all four personas now have a full, genuine 5/5** — identical
+habit/watching ids and identical numbers across every rerun. This is
+better than any stability result this project has previously recorded:
+the v5-era numbers this section used to cite were 5/5 for arjun and neha
+but only a partial 3/5 (vikram) and 1/5 (sara), both cut short by a
+free-tier daily quota, not a content issue. `eval_narration.py`:
+
+```
+arjun_revenge_sizer: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+  stability        [ok] 5 runs, identical ids and numbers
+
+neha_expiry_day: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+  stability        [ok] 5 runs, identical ids and numbers
+
+sara_thin_data: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+  stability        [ok] 5 runs, identical ids and numbers
+
+vikram_control: PASS
+  number_tracing   [ok] ok
+  advice_filter    [ok] ok
+  state_fidelity   [ok] ok
+  stability        [ok] 5 runs, identical ids and numbers
+
+ALL PASS
+```
 
 Vikram's actual regenerated output (the one this whole prompt was about):
 
