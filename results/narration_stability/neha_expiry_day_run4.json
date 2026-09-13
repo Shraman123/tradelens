@@ -1,0 +1,13 @@
+{
+  "headline": "Expiry\u2011day trades are hurting your results",
+  "habits": {
+    "expiry_day_trading": {
+      "why_it_matters": "Across the 90 expiry\u2011day trades you lost \u20b91,16,891, averaging a loss of \u20b91,299 per trade with a 29% win rate and a 28% loss on average. The remaining 124 trades in the window produced a smaller loss, averaging a loss of \u20b9449 and a 37% win rate, with an average return loss of a 5% loss versus the a 28% loss on expiry\u2011day trades. This slice therefore accounts for a large portion of the overall loss, making it a key area to address.",
+      "rule": "Set a hard cap on expiry-day trades before the open."
+    }
+  },
+  "closing": "For the next window, try applying the rule to set a hard cap on expiry\u2011day trades before the open.",
+  "persona": "neha_expiry_day",
+  "watching": {},
+  "also_noticed": {}
+}

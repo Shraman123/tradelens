@@ -1,12 +1,12 @@
 {
-  "headline": "Expiry\u2011day trades are costing you a lot.",
+  "headline": "Expiry\u2011day trades are hurting your results.",
   "habits": {
     "expiry_day_trading": {
-      "why_it_matters": "Expiry\u2011day trades cost you \u20b91,16,891 across 90 trades, resulting in a loss of \u20b91,16,891 and an average loss per trade of \u20b91,299, with a win rate of 29% and an average return of a 28% loss. The remaining 124 trades showed a loss of \u20b9449 on average, a 5% loss overall, and a win rate of 37%.",
+      "why_it_matters": "This behaviour cost you \u20b91,16,891 across 90 expiry\u2011day trades. On those trades you averaged a loss of \u20b91,299, had a win rate of 29% and saw an average return of a 28% loss. The remaining 124 trades averaged a loss of \u20b9449, a 5% loss return and a win rate of 37%.",
       "rule": "Set a hard cap on expiry-day trades before the open."
     }
   },
-  "closing": "Consider applying the rule to limit expiry\u2011day trades in the next review period.",
+  "closing": "For the next window, you might want to set a hard cap on expiry\u2011day trades before the open, as the rule suggests.",
   "persona": "neha_expiry_day",
   "watching": {},
   "also_noticed": {}

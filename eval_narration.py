@@ -33,7 +33,17 @@ demo/<persona>_narration.json:
                        the digit is still correct, only the English is
                        broken. Fails on "a loss/gain of" immediately
                        followed by another "a loss/gain of".
-5. Stability        - across N reruns (results/narration_stability/), the set
+5. Slice cost dup   - v9: for a `kind:"slice"` habit, `cost` is defined as the
+                       negation of `evidence.slice_net` (detectors.py) -- the
+                       same loss, handed to the model as two pre-formatted
+                       strings ("₹1,16,891" and "a loss of ₹1,16,891"). It has
+                       been observed stating both back to back ("cost you
+                       ₹1,16,891 ... resulting in a loss of ₹1,16,891" -- a
+                       real generation, not a hypothetical). Number tracing
+                       can't catch this (both instances trace fine); this
+                       fails when a slice habit's shared magnitude appears
+                       more than once in its own why_it_matters.
+6. Stability        - across N reruns (results/narration_stability/), the set
                        of habit/watching ids named and every number used is
                        identical.
 """
@@ -60,6 +70,25 @@ ADVICE_RE = re.compile("|".join(ADVICE_WORDS), re.IGNORECASE)
 REDUNDANT_FRAMING_RE = re.compile(r"\ba (?:loss|gain) of\s+a (?:loss|gain) of\b", re.IGNORECASE)
 
 NUMBER_RE = re.compile(r"-?\d[\d,]*\.?\d*")
+
+
+def _inr(n) -> str:
+    """Indian digit grouping: 116891 -> '1,16,891'. Mirrors narrate.py's
+    inr() — duplicated rather than imported so this eval has no dependency
+    on narrate.py's API-client setup; see app/src/lib/format.ts for the same
+    pattern on the frontend side."""
+    n = int(round(n))
+    s = str(abs(n))
+    if len(s) <= 3:
+        return s
+    head, last3 = s[:-3], s[-3:]
+    parts = []
+    while len(head) > 2:
+        parts.insert(0, head[-2:])
+        head = head[:-2]
+    if head:
+        parts.insert(0, head)
+    return ",".join(parts) + "," + last3
 
 
 def all_numbers(obj) -> set:
@@ -176,6 +205,19 @@ def check_redundant_framing(persona, analysis, narration):
     return (len(hits) == 0, f"redundant framing found: {hits}" if hits else "ok")
 
 
+def check_slice_cost_duplication(persona, analysis, narration):
+    problems = []
+    for h in analysis.get("habits", []):
+        if h.get("kind") != "slice" or h.get("cost") is None:
+            continue
+        figure = _inr(h["cost"])
+        text = narration.get("habits", {}).get(h["id"], {}).get("why_it_matters", "")
+        n = text.count(figure)
+        if n > 1:
+            problems.append(f"{h['id']}: ₹{figure} appears {n} times in why_it_matters: {text!r}")
+    return (len(problems) == 0, "; ".join(problems) if problems else "ok")
+
+
 def check_state_fidelity(persona, analysis, narration):
     text_all = (narration.get("headline", "") + " " + narration.get("closing", "")).lower()
     if analysis["insufficient_data"] or not analysis.get("habits"):
@@ -226,6 +268,7 @@ def main():
             "advice_filter": check_advice_filter(persona, analysis, narration),
             "state_fidelity": check_state_fidelity(persona, analysis, narration),
             "redundant_framing": check_redundant_framing(persona, analysis, narration),
+            "slice_cost_dup": check_slice_cost_duplication(persona, analysis, narration),
         }
         stable_ok, stable_msg = check_stability(persona)
         # Store the real tri-state result (None = no runs at all) so the
