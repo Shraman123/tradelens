@@ -7,6 +7,7 @@
     "build:pdf": "node scripts/build_pdf.js"
   },
   "devDependencies": {
+    "pdf-lib": "^1.17.1",
     "puppeteer": "^23.0.0"
   }
 }
