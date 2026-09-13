@@ -691,3 +691,71 @@ elevation needed, ships its own Chromium) prints it to
 `TradeLens_Submission.pdf`. `npm run build:pdf` from the repo root.
 Verified by reading the actual rendered PDF, not just checking the file
 was written: two pages, correct section order, no rendering artifacts.
+
+## 11. v9: Neha's duplicated cost figure (2026-09-13)
+
+```
+Neha's why_it_matters states the same figure twice: "cost you ₹1,16,891 across 90 trades, resulting in a loss of ₹1,16,891." For slice habits the cost and the negated net are the same number, so the prompt shouldn't ask for both. Add a v9 rule: when a habit's cost equals its slice net, state the figure once. Regenerate, re-run eval_narration.py, redeploy, retake Neha's screenshot, rebuild the PDF.
+```
+
+Root cause, traced in `detectors.py` before touching the prompt: for a
+`kind:"slice"` habit, `cost = -s.net_pnl.sum()` and
+`evidence.slice_net = s.net_pnl.sum()` — literally the same underlying
+number, defined as each other's negation, not two independent facts.
+`narrate.py` then pre-formats them as two *different-looking* strings
+(`cost` -> `"₹1,16,891"` via `_rupees`; `slice_net` -> `"a loss of
+₹1,16,891"` via `_rupees_signed`), and rule 2's completeness requirement
+("reference `cost` **and every** field inside `evidence`") gave the model
+no way to know these two instructions pointed at one number, not two —
+it dutifully wrote both, producing "cost you ₹1,16,891 across 90 trades,
+resulting in a loss of ₹1,16,891."
+
+Confirmed this is structural, not a one-off: `_slice_habit` is the only
+detector that defines `cost` as a bare negation of an `evidence` field
+this way (the size-up-after-loss and averaging-down detectors compute
+`cost` from a counterfactual difference instead, which doesn't equal any
+single evidence field) — so the fix had to be scoped to `kind:"slice"`
+specifically, not applied as a blanket rule that might suppress a
+genuinely distinct number elsewhere.
+
+**Fix, matching this project's established pattern** (a bug the eval
+suite doesn't catch gets a permanent new check, not just a prompt patch —
+see sections 4 and 8):
+1. `prompts/narration_system.md` v8 -> v9: rule 2 gets an explicit
+   exception for `kind:"slice"` habits — state the shared `cost`/
+   `slice_net` figure once, in either framing, and cover the rest of
+   `evidence` as usual. Named the exact bad sentence as the failure mode
+   this exists to prevent, same convention as rule 1's v8 addition.
+2. New `check_slice_cost_duplication` in `eval_narration.py` (a 5th
+   non-stability check): for each `kind:"slice"` habit, counts how many
+   times its Indian-grouped cost figure appears in that habit's own
+   `why_it_matters`; fails if more than once. Verified against the actual
+   bug before writing any fix: correctly failed on the old v8 text
+   (`₹1,16,891 appears 2 times`) and passed clean once v9 text was in.
+
+Regenerated only `neha_expiry_day` — the sole persona with a confirmed
+`kind:"slice"` habit, so the only one this rule could affect. First call,
+no retries:
+
+> "This behaviour cost you ₹1,16,891 across 90 expiry‑day trades. On
+> those trades you averaged a loss of ₹1,299, had a win rate of 29% and
+> saw an average return of a 28% loss. The remaining 124 trades averaged
+> a loss of ₹449, a 5% loss return and a win rate of 37%."
+
+`eval_narration.py`, all four personas, now 5 non-stability checks each:
+all PASS, including the new `slice_cost_dup` check everywhere (only
+`neha_expiry_day` actually exercises the `kind:"slice"` branch; the other
+three pass trivially since they have no slice-kind habit to check). Also
+ran a genuine fresh `--stability 5` for `neha_expiry_day` against v9
+rather than leave a stale, misleading single v8-era run file sitting in
+`results/narration_stability/` that would otherwise have "passed" on an
+n of 1: 5/5, identical habit ids and numbers.
+
+Copied into `app/src/data/`, `npm test` and `npm run build` clean,
+pushed, redeployed, confirmed via the live JS bundle that the old
+"resulting in a loss" phrasing is gone. Retook screenshots for all four
+personas and diffed them against the previous set — only
+`neha_review.png` changed, as expected (the fix touches one persona's
+`why_it_matters` text only; nothing else on any other screen reads from
+it). Rebuilt `TradeLens_Submission.pdf`: page count and size unchanged
+(30 pages, 0.82 MB) — only that one embedded screenshot's pixels differ.
