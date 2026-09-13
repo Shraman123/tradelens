@@ -161,17 +161,22 @@ function promptsSummaryTableHtml() {
 }
 
 function artifact4Html() {
-  const shots = SCREENSHOTS.map((s) => {
+  const shots = SCREENSHOTS.map((s, i) => {
     const filePath = path.join(ASSETS_DIR, s.file);
     if (!fs.existsSync(filePath)) {
       throw new Error(`Missing screenshot: submission_assets/${s.file}`);
     }
     const uri = imageToDataUri(filePath);
-    return `
+    const figure = `
       <figure class="screenshot">
         <img src="${uri}" alt="${escapeHtml(s.caption)}" />
         <figcaption>${escapeHtml(s.caption)}</figcaption>
       </figure>`;
+    // One persona per page: force a break before every screenshot after the
+    // first (the first shares its page with the two link lines above, which
+    // is short enough to leave room). max-height on the img (see STYLE) is
+    // what keeps each screenshot from spanning multiple pages on its own.
+    return i === 0 ? figure : `<div class="page-break">${figure}</div>`;
   }).join("\n");
 
   return `
@@ -245,9 +250,27 @@ const STYLE = `
   .summary-table .col-change { width: 65%; }
 
   /* Artifact 4 */
-  .artifact4 figure.screenshot { margin: 0 0 14pt 0; page-break-inside: avoid; }
-  .artifact4 figure.screenshot img { width: 100%; border: 1px solid #ddd; border-radius: 3pt; }
-  .artifact4 figcaption { font-size: 9pt; color: #555; margin-top: 4pt; text-align: center; }
+  .artifact4 figure.screenshot {
+    margin: 0 0 14pt 0;
+    text-align: center;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .artifact4 figure.screenshot img {
+    /* Bounded by height, not width, so a tall phone-width screenshot
+       (e.g. Arjun's habit detail, with 5 example trades) still fits one
+       print page instead of spanning three with a near-empty tail page.
+       225mm leaves room, within the ~267mm content height (A4 minus this
+       script's 16mm/14mm top/bottom margins), for the figcaption below. */
+    display: inline-block;
+    max-width: 100%;
+    max-height: 225mm;
+    width: auto;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 3pt;
+  }
+  .artifact4 figcaption { font-size: 9pt; color: #555; margin-top: 6pt; text-align: center; }
 </style>`;
 
 function wrapDocument(bodyHtml) {
