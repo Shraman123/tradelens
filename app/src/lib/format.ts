@@ -61,6 +61,15 @@ export function formatDate(iso: string): string {
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
 }
 
+/** review_month.month is "2026-08" -> "Aug". Used to disambiguate a review-month
+ * stat (e.g. "Trades") from the longer evidence-window total shown elsewhere on
+ * the same screen (analysis.summary.closed_trades, analysis.message) — without
+ * this, two different trade counts on one screen read as a bug. */
+export function formatMonthShort(month: string): string {
+  const d = new Date(month + "-01T00:00:00")
+  return d.toLocaleDateString("en-IN", { month: "short" })
+}
+
 /** summary.window is "2026-07-01 to 2026-08-31" -> "1 Jul – 31 Aug 2026". */
 export function formatWindow(window: string): string {
   const [start, end] = window.split(" to ")

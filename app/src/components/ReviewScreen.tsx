@@ -1,6 +1,6 @@
 import type { Habit, NotReported, PersonaData, Summary } from "../types"
 import { habitLabel, humanizeReason } from "../data/habitLabels"
-import { pct, rupees, rupeesPlain, formatWindow } from "../lib/format"
+import { pct, rupees, rupeesPlain, formatWindow, formatMonthShort } from "../lib/format"
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
@@ -17,7 +17,12 @@ function StatRow({ summary }: { summary: Summary }) {
   return (
     <div className="grid grid-cols-3 gap-2.5">
       <Stat label="Net P&L" value={rupeesPlain(rm.net_pnl)} />
-      <Stat label="Trades" value={String(rm.closed_trades)} />
+      {/* "(Aug)" disambiguates this from the longer evidence-window trade
+          count that can appear elsewhere on this same screen (e.g. Sara's
+          insufficient-data message quotes the full 60-day window total) --
+          without it, two different trade counts on one screen read as a bug
+          even though both are correct. */}
+      <Stat label={`Trades (${formatMonthShort(rm.month)})`} value={String(rm.closed_trades)} />
       <Stat label="Win rate" value={pct(rm.win_rate)} />
     </div>
   )
