@@ -692,7 +692,101 @@ elevation needed, ships its own Chromium) prints it to
 Verified by reading the actual rendered PDF, not just checking the file
 was written: two pages, correct section order, no rendering artifacts.
 
-## 11. v9: Neha's duplicated cost figure (2026-09-13)
+## 11. Resuming the session: finish the combined submission PDF (Claude Code, 2026-09-13)
+
+- `resume` — new session, no prior context carried over. Found the
+  existing `tradelens/` repo and its in-progress state by searching the
+  filesystem rather than asking the user to re-explain everything.
+- `nubra assiganment trading app` / `i was working onn that ap` —
+  confirmed which project and picked up mid-stream: `build_pdf.js` had an
+  uncommitted rewrite (cover page + all four artifacts combined + four
+  screenshots, from an earlier session) but `submission_assets/` was
+  empty and never tracked in git, so `npm run build:pdf` would fail as
+  written. The 2-day submission window (assignment PDF downloaded
+  2026-09-10) also looked like it might already have passed.
+- Asked two clarifying questions rather than guessing: had this already
+  been submitted (no — still pending, treat as active), and finish the
+  ambitious combined-PDF version or fall back to the simpler
+  one-pager-only PDF that was last actually committed. Chose: finish the
+  combined version.
+
+No Chrome extension was connected in this environment, so screenshots
+were captured by driving the live Vercel deployment directly with
+Puppeteer (already a project devDependency) instead of the browser tool —
+a new `scripts/capture_screenshots.js`, clicking through each persona
+from a fresh page load (the app has no URL routing; every screen is React
+state). First pass used `page.screenshot({fullPage: true})`; caught two
+problems before committing, both by actually reading the output images
+rather than trusting a successful exit code:
+1. Neha's and Sara's shots landed mid-animation (the app fades in every
+   new screen on persona/view change) — fixed with a short settle delay
+   before capturing.
+2. A short screen (Vikram, Sara) still carries `body`'s `min-h-screen`
+   padding below its real content, so `fullPage` captured several hundred
+   extra pixels of pure black, which later spilled onto its own
+   near-empty page in the PDF. Fixed by measuring `#main`'s actual bottom
+   in-page and clipping the screenshot there instead of using `fullPage`.
+
+Built `TradeLens_Submission.pdf` (35 pages, 1.26 MB at this point — the
+per-page-fit problem this created is fixed in entry 12 below). Verified
+by reading the actual rendered pages, not just checking the file was
+written. Committed and pushed.
+
+## 12. Two fixes to the submission PDF (Claude Code, 2026-09-13)
+
+```
+Two fixes to the submission PDF, then rebuild.
+
+1. Screenshots break across pages — Arjun spans 3 pages with page 30 nearly blank, Neha and Vikram the same. Scale each screenshot to fit within a single page (max-height: 90vh or equivalent print CSS) so each persona gets one clean page with its caption. Keep them legible.
+
+2. On Sara's screen the stat row says "TRADES 9" while the message says "18 closed trades" — the same screen showing two trade counts reads as a bug even though both are correct. Label the stat column "TRADES (AUG)" or similar so the distinction is visible. This is a UI label change, not narration. Re-deploy, retake Sara's screenshot, rebuild the PDF.
+
+Tell me the final page count and file size.
+```
+
+Fix 2 first, since it needed a real deploy either way: `ReviewScreen.tsx`'s
+stat tile showed `analysis.summary.review_month.closed_trades` labeled
+plain "Trades", while Sara's insufficient-data message quotes
+`analysis.summary.closed_trades` (the full 60-day evidence window) — both
+correct, genuinely different counts, but unlabeled that reads as a bug.
+Relabeled to "Trades (Aug)", derived from `review_month.month` (new
+`formatMonthShort` in `lib/format.ts`) so it stays correct for any review
+month rather than hardcoded. UI label only — no narration, detector, or
+data change. `StatRow` is a shared component, so the fix applies to every
+persona's Review screen, not just Sara's.
+
+**Unplanned discovery while redeploying**: the fix built cleanly locally,
+but production deploys had actually been failing for roughly 16 hours —
+since a prior session's commit `f96a888` added a root-level
+`package.json`/`package-lock.json` (for this repo's own PDF-build
+tooling, unrelated to the deployed app). Vercel's project had no explicit
+Root Directory set, relying on auto-detection that only worked while
+`app/` held the repo's *only* `package.json`; with two now in the repo,
+it silently started resolving to the repo root instead — installing
+`puppeteer`/`pdf-lib` and never `vite`. Traced via `vercel inspect
+--logs` (`vite: command not found`, exit 127) and the Vercel API
+(`rootDirectory` came back blank). Checked first whether this had
+stranded any of the user's own app-facing work — it hadn't (`git diff
+--name-only f96a888..HEAD -- app/` showed only this session's own two
+files); only this session's commits were affected. The fix
+(`rootDirectory: "app"` via the Vercel API) is a production-affecting
+change, so it was blocked by Claude Code's own permission classifier on
+the first attempt; asked the user before retrying rather than working
+around the block, got a yes, then confirmed the next deploy built and
+aliased cleanly.
+
+Fix 1: `build_pdf.js`'s screenshot CSS scaled each image to the page's
+full width (`width: 100%`), so a tall phone-width shot (Arjun's, with 5
+example trades) rendered as a very tall image spanning 2-3 print pages
+with a near-empty tail page. Switched to bounding by height instead
+(`max-height: 225mm`, width auto) and added an explicit page break before
+every screenshot after the first, so each persona gets exactly one page.
+
+Recaptured all four screenshots against the (now correctly deployed)
+live app and rebuilt: **30 pages, 0.82 MB** (down from 35 pages / 1.26
+MB), reported back to the user as asked.
+
+## 13. v9: Neha's duplicated cost figure (2026-09-13)
 
 ```
 Neha's why_it_matters states the same figure twice: "cost you ₹1,16,891 across 90 trades, resulting in a loss of ₹1,16,891." For slice habits the cost and the negated net are the same number, so the prompt shouldn't ask for both. Add a v9 rule: when a habit's cost equals its slice net, state the figure once. Regenerate, re-run eval_narration.py, redeploy, retake Neha's screenshot, rebuild the PDF.

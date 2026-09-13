@@ -142,7 +142,9 @@ const PROMPT_VERSIONS = [
   ["8", "2026-09-12", "Live-app bug: “a loss of a loss”, v8", "A duplicated phrase automated checks couldn't catch (correct number, broken English) found by reading the live app; new prompt rule plus a permanent redundant_framing check."],
   ["9", "2026-09-12", "v8 stability, partial", "Arjun 5/5, Neha 1/5, Vikram/Sara blocked by Groq's daily quota. Also fixed eval_narration.py silently reporting a missing stability run as a pass instead of a skip."],
   ["10", "2026-09-12/13", "ONE_PAGER.md + PDF pipeline", "Added the one-pager (699 words) and a pandoc + Puppeteer build for this submission PDF."],
-  ["11", "2026-09-13", "v9: Neha's duplicated cost figure", "why_it_matters stated the same slice-habit cost twice (cost == -slice_net). New rule 2 exception + a permanent slice_cost_dup eval check; regenerated, fresh 5/5 stability, redeployed, retook Neha's screenshot."],
+  ["11", "2026-09-13", "Resuming: finish the combined PDF", "Picked up an uncommitted build_pdf.js rewrite from an earlier session; captured the 4 missing screenshots via Puppeteer against the live app (no browser extension available), fixing a mid-animation capture and a fullPage overcapture bug along the way."],
+  ["12", "2026-09-13", "Two fixes to the submission PDF", "Sara's “Trades” stat relabeled “Trades (Aug)” to disambiguate from the window-total count nearby. Screenshot CSS switched from width-fill to height-capped so each persona fits one PDF page. Also found and fixed, out of band: Vercel deploys had been failing ~16h due to a stray root-level package.json confusing Root Directory auto-detection."],
+  ["13", "2026-09-13", "v9: Neha's duplicated cost figure", "why_it_matters stated the same slice-habit cost twice (cost == -slice_net). New rule 2 exception + a permanent slice_cost_dup eval check; regenerated, fresh 5/5 stability, redeployed, retook Neha's screenshot."],
 ];
 
 function promptsSummaryTableHtml() {
